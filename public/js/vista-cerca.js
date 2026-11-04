@@ -2,6 +2,7 @@
 import { esc, $, toast } from './util.js';
 import { obtenerParadas, enlaceFicha } from './api.js';
 import { itemParada } from './vistas.js';
+import { mapaCerca } from './mapa.js';
 import {
   soportaGPS, obtenerPosicion, ordenarPorCercania, formatoDistancia, minutosCaminando, rumbo, vibrar,
 } from './dispositivo.js';
@@ -36,7 +37,8 @@ async function buscar(c) {
     vibrar([60, 40, 60]);
 
     const href = await enlaceFicha(masCercana.id);
-    const otras = await Promise.all(resto.slice(0, 4).map(async (p) => itemParada(p, await enlaceFicha(p.id), formatoDistancia(p.distancia))));
+    const enlaces = Object.fromEntries(await Promise.all(ordenadas.map(async (p) => [p.id, await enlaceFicha(p.id)])));
+    const otras = resto.slice(0, 4).map((p) => itemParada(p, enlaces[p.id], formatoDistancia(p.distancia)));
 
     resultado.innerHTML = `
       <section class="tarjeta">
@@ -57,9 +59,15 @@ async function buscar(c) {
              href="https://www.google.com/maps/dir/?api=1&origin=${pos.lat},${pos.lng}&destination=${masCercana.lat},${masCercana.lng}&travelmode=walking">🧭 Cómo llegar</a>
         </div>
         <p class="suave pequeno">Precisión del GPS: ±${Math.round(pos.precision)} m</p>
+        <div id="mapa-cerca" class="mapa" role="region" aria-label="Mapa de tu ubicación y la parada más cercana"></div>
       </section>
       <h2>Otras paradas cercanas</h2>
       <ul class="lista">${otras.join('')}</ul>`;
+
+    mapaCerca($('#mapa-cerca', c), pos, masCercana, resto.slice(0, 4), enlaces).catch((e) => {
+      console.warn(e);
+      $('#mapa-cerca', c)?.remove();
+    });
   } catch (e) {
     resultado.innerHTML = `<section class="tarjeta estado-vacio"><p>⚠️ ${esc(e.message)}</p></section>`;
     toast(e.message);

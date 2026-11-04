@@ -5,11 +5,13 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
 
-const VERSION = 'v6'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v7'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
-const CACHES_ACTUALES = [CACHE_SHELL, CACHE_DATOS, CACHE_IMAGENES];
+const CACHE_MAPA = 'rutaexpress-mapa'; // sin versión: las teselas sobreviven a las actualizaciones
+const MAX_TESELAS = 400;
+const CACHES_ACTUALES = [CACHE_SHELL, CACHE_DATOS, CACHE_IMAGENES, CACHE_MAPA];
 
 // Rutas relativas a la ubicación de sw.js: funciona en "/" y en "/repo/" (GitHub Pages)
 const SHELL = [
@@ -37,6 +39,9 @@ const SHELL = [
   './js/vista-cerca.js',
   './js/dispositivo.js',
   './js/ficha-ssr.js',
+  './js/mapa.js',
+  './vendor/leaflet/leaflet.js',
+  './vendor/leaflet/leaflet.css',
   './data/paradas.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -99,11 +104,35 @@ async function staleWhileRevalidate(peticion) {
   return enCache || (await deRed) || Response.error();
 }
 
+// Teselas del mapa: caché primero; se recorta la caché para no llenar el dispositivo.
+// (La política de OpenStreetMap no permite descargar zonas por adelantado.)
+async function teselaMapa(peticion) {
+  const cache = await caches.open(CACHE_MAPA);
+  const enCache = await cache.match(peticion);
+  if (enCache) return enCache;
+  try {
+    const respuesta = await fetch(peticion);
+    if (respuesta.ok) {
+      await cache.put(peticion, respuesta.clone());
+      const claves = await cache.keys();
+      if (claves.length > MAX_TESELAS) await Promise.all(claves.slice(0, claves.length - MAX_TESELAS).map((k) => cache.delete(k)));
+    }
+    return respuesta;
+  } catch {
+    return Response.error();
+  }
+}
+
 // ---------- Enrutado de peticiones ----------
 self.addEventListener('fetch', (evento) => {
   const { request } = evento;
   if (request.method !== 'GET') return; // POST de reseñas/push van directo a la red
   const url = new URL(request.url);
+  // Teselas de OpenStreetMap → caché primero (se guardan las zonas visitadas, con límite)
+  if (url.hostname === 'tile.openstreetmap.org') {
+    evento.respondWith(teselaMapa(request));
+    return;
+  }
   if (url.origin !== self.location.origin) return; // p. ej. Google Maps
 
   const relativa = url.href.startsWith(BASE) ? url.href.slice(BASE.length) : url.pathname;

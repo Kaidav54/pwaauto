@@ -6,6 +6,7 @@ import { guardarPref, leerPref } from './prefs.js';
 import { cargarResenas, publicarResena } from './resenas.js';
 import { hayServidor } from './api.js';
 import { compartir, vibrar } from './dispositivo.js';
+import { mapaFicha } from './mapa.js';
 
 const DB = window.RutaDB;
 const { listaResenasHTML } = window.PlantillaFicha;
@@ -99,5 +100,12 @@ function botonCompartir(raiz, parada) {
 export async function activarAccionesFicha(raiz, parada) {
   guardarPref('ultimaParada', parada.id);
   botonCompartir(raiz, parada);
+  const contenedorMapa = $('[data-mapa-ficha]', raiz);
+  if (contenedorMapa) {
+    mapaFicha(contenedorMapa, parada).catch((e) => {
+      console.warn(e);
+      contenedorMapa.remove();
+    });
+  }
   await Promise.all([botonFavorito(raiz, parada), seccionResenas(raiz, parada)]);
 }

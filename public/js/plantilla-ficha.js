@@ -69,6 +69,7 @@
     </div>
     <p>${esc(p.descripcion)}</p>
     <div>${caracteristicas(p)}</div>
+    <div class="mapa mapa--ficha" data-mapa-ficha role="region" aria-label="Mapa de ubicación de ${esc(p.nombre)}"></div>
     <div class="botones" data-acciones>
       <a class="boton boton--sec" target="_blank" rel="noopener"
          href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}">🧭 Cómo llegar</a>

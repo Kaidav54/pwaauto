@@ -11,7 +11,11 @@
     "vapid": "node scripts/generar-vapid.js",
     "test": "node --test \"test/**/*.test.js\""
   },
-  "keywords": ["pwa", "service-worker", "transporte"],
+  "keywords": [
+    "pwa",
+    "service-worker",
+    "transporte"
+  ],
   "author": "davkaito0929",
   "license": "MIT",
   "engines": {
@@ -19,6 +23,7 @@
   },
   "dependencies": {
     "express": "^4.22.3",
+    "leaflet": "^1.9.4",
     "web-push": "^3.6.7"
   }
 }

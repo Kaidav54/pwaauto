@@ -1,10 +1,11 @@
 // Vistas renderizadas en el navegador (CSR)
 import { esc, $, $$, toast } from './util.js';
 import { obtenerParadas, obtenerParada, enlaceFicha } from './api.js';
-import { estadoInstalacion, alCambiarInstalacion, instalar } from './instalacion.js';
+import { estadoInstalacion, alCambiarInstalacion, instalar, instruccionesManuales } from './instalacion.js';
 import { leerPref, guardarPref, borrarPrefs } from './prefs.js';
 import { activarAccionesFicha } from './ficha-acciones.js';
 import { versionServiceWorker } from './registro-sw.js';
+import { mapaParadas } from './mapa.js';
 
 const { icono, tipoTexto, fichaHTML } = window.PlantillaFicha;
 
@@ -32,16 +33,23 @@ export async function vistaInicio(c) {
   const boton = $('#btn-instalar', c);
   const texto = $('#texto-instalacion', c);
   const pintar = (estado) => {
-    boton.hidden = estado !== 'disponible';
-    texto.textContent =
-      estado === 'instalada' ? '✅ Estás usando RutaExpress instalada.' :
-      estado === 'ios' ? 'En iPhone: toca Compartir ▸ «Agregar a pantalla de inicio».' : '';
+    // El botón siempre está visible salvo que ya esté instalada
+    boton.hidden = estado === 'instalada';
+    texto.textContent = estado === 'instalada' ? '✅ Estás usando RutaExpress instalada.' : '';
   };
   pintar(estadoInstalacion());
   const quitar = alCambiarInstalacion(pintar);
   window.addEventListener('hashchange', quitar, { once: true });
   boton.addEventListener('click', async () => {
-    if (await instalar()) toast('¡Gracias por instalar RutaExpress!');
+    const resultado = await instalar();
+    if (resultado === 'aceptada') {
+      toast('¡Gracias por instalar RutaExpress!');
+    } else if (resultado === 'rechazada') {
+      toast('Instalación cancelada. Puedes instalarla cuando quieras.');
+    } else {
+      // Sin diálogo nativo: instrucciones para este navegador
+      texto.innerHTML = `<strong>Cómo instalar:</strong> ${esc(instruccionesManuales())}`;
+    }
   });
 }
 
@@ -81,7 +89,17 @@ export async function vistaParadas(c) {
       <button class="chip" data-tipo="autobus" aria-pressed="false">🚌 Autobús</button>
       <button class="chip" data-tipo="combi" aria-pressed="false">🚐 Combis</button>
     </div>
+    <div id="mapa-paradas" role="region" aria-label="Mapa de paradas"></div>
     <ul class="lista" id="lista"></ul>`;
+
+  // Mapa real; si falla (p. ej. sin Leaflet en caché) la lista sigue funcionando
+  let mapa = null;
+  mapaParadas($('#mapa-paradas', c), paradas, enlaces)
+    .then((m) => (mapa = m))
+    .catch((e) => {
+      console.warn(e);
+      $('#mapa-paradas', c).remove();
+    });
 
   let tipo = 'todos';
   const dibujar = () => {
@@ -93,6 +111,7 @@ export async function vistaParadas(c) {
     $('#lista', c).innerHTML = filtradas.length
       ? filtradas.map((p) => itemParada(p, enlaces[p.id])).join('')
       : '<li class="estado-vacio">No hay paradas que coincidan.</li>';
+    mapa?.actualizar(filtradas);
   };
 
   $('#q', c).addEventListener('input', dibujar);

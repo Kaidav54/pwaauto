@@ -2,6 +2,7 @@
 :root {
   --primario: #0f766e;
   --primario-osc: #115e59;
+  --enlace: #0f766e;
   --acento: #f59e0b;
   --fondo: #f1f5f4;
   --superficie: #ffffff;
@@ -26,6 +27,7 @@
     --texto: #e6f0ee;
     --texto-suave: #9fb3af;
     --borde: #24403c;
+    --enlace: #5eead4;
     color-scheme: dark;
   }
 }
@@ -35,6 +37,7 @@
   --texto: #e6f0ee;
   --texto-suave: #9fb3af;
   --borde: #24403c;
+  --enlace: #5eead4;
   color-scheme: dark;
 }
 
@@ -49,7 +52,7 @@ body {
   padding-top: calc(var(--alto-barra) + env(safe-area-inset-top));
   padding-bottom: calc(var(--alto-menu) + env(safe-area-inset-bottom));
 }
-a { color: var(--primario); }
+a { color: var(--enlace); }
 h1, h2, h3 { line-height: 1.2; margin: 0 0 .5rem; }
 h1 { font-size: 1.5rem; }
 h2 { font-size: 1.2rem; }
@@ -100,7 +103,7 @@ h3 { font-size: 1rem; }
   gap: 2px; font-size: .72rem; text-decoration: none; color: var(--texto-suave);
 }
 .menu a span { font-size: 1.3rem; line-height: 1; }
-.menu a[aria-current="page"] { color: var(--primario); font-weight: 700; }
+.menu a[aria-current="page"] { color: var(--enlace); font-weight: 700; }
 
 /* ---- Botones y formularios ---- */
 .boton {
@@ -111,7 +114,7 @@ h3 { font-size: 1rem; }
 }
 .boton:hover { background: var(--primario-osc); }
 .boton:disabled { opacity: .55; cursor: not-allowed; }
-.boton--sec { background: transparent; color: var(--primario); border: 2px solid var(--primario); }
+.boton--sec { background: transparent; color: var(--enlace); border: 2px solid var(--enlace); }
 .boton--sec:hover { background: rgb(15 118 110 / .08); }
 .boton--acento { background: var(--acento); color: #1f1300; }
 .botones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -145,7 +148,7 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--primario); 
 .parada__rutas { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .etiqueta {
   display: inline-block; font-size: .72rem; font-weight: 700; padding: 2px 8px;
-  border-radius: 6px; background: rgb(15 118 110 / .12); color: var(--primario);
+  border-radius: 6px; background: rgb(15 118 110 / .18); color: var(--enlace);
 }
 .etiqueta--acento { background: rgb(245 158 11 / .18); color: var(--aviso); }
 

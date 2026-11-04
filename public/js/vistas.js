@@ -1,17 +1,43 @@
 // Vistas renderizadas en el navegador (CSR)
-import { esc, $, $$ } from './util.js';
+import { esc, $, $$, toast } from './util.js';
 import { obtenerParadas, obtenerParada, enlaceFicha } from './api.js';
+import { estadoInstalacion, alCambiarInstalacion, instalar } from './instalacion.js';
 
 const { icono, tipoTexto, fichaHTML } = window.PlantillaFicha;
 
-// ---------- Inicio ----------
+// ---------- Inicio (Home) ----------
 export async function vistaInicio(c) {
   c.innerHTML = `
     <section class="tarjeta hero">
       <h1>¿A dónde vas hoy?</h1>
       <p>Consulta paradas, rutas, horarios y tarifas de tu ciudad, incluso sin conexión.</p>
-      <div class="botones"><a class="boton" href="#/paradas">Ver paradas</a></div>
-    </section>`;
+      <div class="botones">
+        <a class="boton" href="#/paradas">Ver paradas</a>
+        <button class="boton boton--sec" id="btn-instalar" hidden>📲 Instalar app</button>
+      </div>
+      <p class="pequeno" id="texto-instalacion"></p>
+    </section>
+    <div class="atajos">
+      <a class="atajo" href="#/paradas"><span>🚏</span><strong>Paradas</strong><span class="suave pequeno">Catálogo y horarios</span></a>
+      <a class="atajo" href="#/cerca"><span>📍</span><strong>Cerca de mí</strong><span class="suave pequeno">Parada más cercana</span></a>
+      <a class="atajo" href="#/avisos"><span>🔔</span><strong>Avisos</strong><span class="suave pequeno">Desvíos y retrasos</span></a>
+      <a class="atajo" href="#/ajustes"><span>⚙️</span><strong>Ajustes</strong><span class="suave pequeno">Tema y datos</span></a>
+    </div>`;
+
+  const boton = $('#btn-instalar', c);
+  const texto = $('#texto-instalacion', c);
+  const pintar = (estado) => {
+    boton.hidden = estado !== 'disponible';
+    texto.textContent =
+      estado === 'instalada' ? '✅ Estás usando RutaExpress instalada.' :
+      estado === 'ios' ? 'En iPhone: toca Compartir ▸ «Agregar a pantalla de inicio».' : '';
+  };
+  pintar(estadoInstalacion());
+  const quitar = alCambiarInstalacion(pintar);
+  window.addEventListener('hashchange', quitar, { once: true });
+  boton.addEventListener('click', async () => {
+    if (await instalar()) toast('¡Gracias por instalar RutaExpress!');
+  });
 }
 
 // ---------- Catálogo (CSR) ----------

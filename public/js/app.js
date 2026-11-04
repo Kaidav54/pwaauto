@@ -5,9 +5,11 @@ import { vistaInicio, vistaParadas, vistaFicha, vistaAjustes, vistaPendiente } f
 import { iniciarInstalacion } from './instalacion.js';
 import { ocultarSplash } from './splash.js';
 import { aplicarTema } from './prefs.js';
+import { iniciarIndicadorConexion } from './conexion.js';
 
 aplicarTema();
 iniciarInstalacion();
+iniciarIndicadorConexion();
 
 ruta('', vistaInicio, 'inicio');
 ruta('paradas', vistaParadas, 'paradas');

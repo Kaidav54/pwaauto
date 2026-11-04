@@ -1,33 +1,139 @@
-// RutaExpress · service worker (versión básica: install, activate, fetch)
-const VERSION = 'v1';
+// RutaExpress · service worker
+// Estrategias:
+//   · Cache First            → app shell (HTML, CSS, JS, íconos precacheados)
+//   · Network First          → datos (API y data/*.json) y páginas SSR de fichas
+//   · Stale-While-Revalidate → imágenes e íconos no precacheados
+const VERSION = 'v2';
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
+const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
+const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
+const CACHES_ACTUALES = [CACHE_SHELL, CACHE_DATOS, CACHE_IMAGENES];
 
-// Archivos del app shell (rutas relativas a la ubicación de sw.js)
+// Rutas relativas a la ubicación de sw.js: funciona en "/" y en "/repo/" (GitHub Pages)
 const SHELL = [
   './',
   './index.html',
-  './css/styles.css',
+  './offline.html',
   './manifest.json',
+  './css/styles.css',
+  './js/app.js',
+  './js/api.js',
+  './js/db.js',
+  './js/prefs.js',
+  './js/router.js',
+  './js/vistas.js',
+  './js/util.js',
+  './js/splash.js',
+  './js/instalacion.js',
+  './js/registro-sw.js',
+  './js/ficha-acciones.js',
+  './js/plantilla-ficha.js',
+  './js/conexion.js',
+  './data/paradas.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './icons/maskable-512.png',
+  './icons/badge-72.png',
 ];
 
-// 1) install: precachear el shell
+const BASE = new URL('./', self.location).href; // p. ej. http://localhost:3000/ o https://usuario.github.io/repo/
+const OFFLINE_URL = new URL('./offline.html', self.location).href;
+const INDEX_URL = new URL('./index.html', self.location).href;
+
+// ---------- install ----------
 self.addEventListener('install', (evento) => {
   evento.waitUntil(caches.open(CACHE_SHELL).then((cache) => cache.addAll(SHELL)));
 });
 
-// 2) activate: borrar cachés de versiones anteriores
+// ---------- activate: limpiar versiones viejas ----------
 self.addEventListener('activate', (evento) => {
   evento.waitUntil(
     caches.keys().then((claves) =>
-      Promise.all(claves.filter((c) => c.startsWith('rutaexpress-') && c !== CACHE_SHELL).map((c) => caches.delete(c)))
+      Promise.all(
+        claves.filter((c) => c.startsWith('rutaexpress-') && !CACHES_ACTUALES.includes(c)).map((c) => caches.delete(c))
+      )
     )
   );
 });
 
-// 3) fetch: primero caché, si no, red
+// ---------- Estrategias ----------
+async function cacheFirst(peticion) {
+  const enCache = await caches.match(peticion, { ignoreSearch: true });
+  if (enCache) return enCache;
+  const respuesta = await fetch(peticion);
+  if (respuesta.ok) (await caches.open(CACHE_SHELL)).put(peticion, respuesta.clone());
+  return respuesta;
+}
+
+async function networkFirst(peticion, { nombreCache = CACHE_DATOS, respaldo } = {}) {
+  const cache = await caches.open(nombreCache);
+  try {
+    const respuesta = await fetch(peticion);
+    if (respuesta.ok) cache.put(peticion, respuesta.clone());
+    return respuesta;
+  } catch (error) {
+    const enCache = await caches.match(peticion); // busca en todas las cachés (incluye el precache)
+    if (enCache) return enCache;
+    if (respaldo) return respaldo();
+    throw error;
+  }
+}
+
+async function staleWhileRevalidate(peticion) {
+  const cache = await caches.open(CACHE_IMAGENES);
+  const enCache = await cache.match(peticion);
+  const deRed = fetch(peticion)
+    .then((r) => {
+      if (r.ok) cache.put(peticion, r.clone());
+      return r;
+    })
+    .catch(() => undefined);
+  return enCache || (await deRed) || Response.error();
+}
+
+// ---------- Enrutado de peticiones ----------
 self.addEventListener('fetch', (evento) => {
-  if (evento.request.method !== 'GET') return;
-  evento.respondWith(caches.match(evento.request).then((r) => r || fetch(evento.request)));
+  const { request } = evento;
+  if (request.method !== 'GET') return; // POST de reseñas/push van directo a la red
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return; // p. ej. Google Maps
+
+  const relativa = url.href.startsWith(BASE) ? url.href.slice(BASE.length) : url.pathname;
+
+  // 1) Navegaciones (HTML)
+  if (request.mode === 'navigate') {
+    // Fichas SSR → red primero, luego copia en caché; si nunca se visitó, se redirige
+    // a la ficha CSR (#/parada/id), que se dibuja con el respaldo de IndexedDB.
+    if (relativa.startsWith('parada/')) {
+      const id = relativa.slice('parada/'.length).split(/[?#]/)[0];
+      evento.respondWith(
+        networkFirst(request, {
+          respaldo: async () =>
+            (await caches.match(INDEX_URL)) ? Response.redirect(`${BASE}#/parada/${id}`, 302) : caches.match(OFFLINE_URL),
+        })
+      );
+      return;
+    }
+    // Resto del shell (index) → caché primero (la app funciona offline al instante)
+    evento.respondWith(
+      caches.match(INDEX_URL).then((r) => r || fetch(request)).catch(() => caches.match(OFFLINE_URL))
+    );
+    return;
+  }
+
+  // 2) Datos → red primero
+  if (relativa.startsWith('api/') || relativa.startsWith('data/')) {
+    if (relativa.startsWith('api/salud') || relativa.startsWith('api/push')) return; // siempre a la red
+    evento.respondWith(networkFirst(request));
+    return;
+  }
+
+  // 3) Imágenes → stale-while-revalidate
+  if (request.destination === 'image') {
+    evento.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+
+  // 4) Shell estático (CSS, JS, manifiesto) → caché primero
+  evento.respondWith(cacheFirst(request));
 });

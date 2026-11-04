@@ -20,6 +20,7 @@ function pagina({ titulo, descripcion, cuerpo, datos }) {
 <body data-ssr="ficha">
   <header class="barra">
     <a class="marca" href="/#/"><span class="marca__logo" aria-hidden="true">🚌</span><span class="marca__nombre">RutaExpress</span></a>
+    <span class="conexion" data-conexion role="status" aria-live="polite" hidden></span>
   </header>
   <main id="contenido" class="contenido">
 ${cuerpo}

@@ -3,7 +3,9 @@
 //   · Cache First            → app shell (HTML, CSS, JS, íconos precacheados)
 //   · Network First          → datos (API y data/*.json) y páginas SSR de fichas
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
-const VERSION = 'v2';
+importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
+
+const VERSION = 'v3';
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -29,6 +31,7 @@ const SHELL = [
   './js/ficha-acciones.js',
   './js/plantilla-ficha.js',
   './js/conexion.js',
+  './js/resenas.js',
   './data/paradas.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -136,4 +139,46 @@ self.addEventListener('fetch', (evento) => {
 
   // 4) Shell estático (CSS, JS, manifiesto) → caché primero
   evento.respondWith(cacheFirst(request));
+});
+
+// ---------- Background Sync: enviar reseñas pendientes ----------
+const URL_RESENAS = new URL('./api/resenas', self.location).href;
+
+async function enviarResenasPendientes() {
+  const pendientes = await self.RutaDB.leerPendientes();
+  const enviadas = [];
+  for (const resena of pendientes) {
+    const respuesta = await fetch(URL_RESENAS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(resena),
+    }); // si no hay red, fetch lanza error → el navegador reintentará el sync más tarde
+    if (respuesta.ok) {
+      await self.RutaDB.guardarResena(await respuesta.json());
+      await self.RutaDB.borrarPendiente(resena.id);
+      enviadas.push(resena.id);
+    } else if (respuesta.status === 400) {
+      await self.RutaDB.borrarPendiente(resena.id); // inválida: no se reintenta
+    } else {
+      throw new Error(`El servidor respondió ${respuesta.status}`);
+    }
+  }
+  if (enviadas.length) {
+    const clientes = await self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
+    clientes.forEach((c) => c.postMessage({ tipo: 'RESENAS_SINCRONIZADAS', ids: enviadas }));
+    if (!clientes.some((c) => c.visibilityState === 'visible') && self.Notification?.permission === 'granted') {
+      await self.registration.showNotification('Comentario publicado', {
+        body: enviadas.length === 1 ? 'Tu comentario ya es visible para otros usuarios.' : `Se publicaron ${enviadas.length} comentarios.`,
+        icon: './icons/icon-192.png',
+        badge: './icons/badge-72.png',
+        tag: 'resenas-sync',
+      });
+    }
+  }
+}
+
+self.addEventListener('sync', (evento) => {
+  if (evento.tag === 'sync-resenas') {
+    evento.waitUntil(enviarResenasPendientes());
+  }
 });

@@ -87,7 +87,17 @@
 
   <section class="tarjeta" id="resenas">
     <h2>Comentarios de usuarios</h2>
+    <p class="suave pequeno">Avisa a otros: retrasos, seguridad, iluminación…</p>
     <ul class="resenas" data-lista-resenas>${listaResenasHTML(resenas)}</ul>
+    <form data-form-resena>
+      <label for="texto-resena">Tu comentario</label>
+      <textarea id="texto-resena" name="texto" required minlength="3" maxlength="500"
+        placeholder="Ej. «La ruta 12 está tardando 20 min» o «Parada segura e iluminada»"></textarea>
+      <label for="autor-resena">Nombre (opcional)</label>
+      <input id="autor-resena" name="autor" maxlength="40" placeholder="Anónimo">
+      <div class="botones"><button class="boton" type="submit">Publicar comentario</button></div>
+      <p class="suave pequeno" data-estado-resena>Funciona sin conexión: se envía solo cuando vuelva la red.</p>
+    </form>
   </section>
 </article>`;
   }

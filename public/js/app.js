@@ -6,10 +6,12 @@ import { iniciarInstalacion } from './instalacion.js';
 import { ocultarSplash } from './splash.js';
 import { aplicarTema } from './prefs.js';
 import { iniciarIndicadorConexion } from './conexion.js';
+import { iniciarSincronizacion } from './resenas.js';
 
 aplicarTema();
 iniciarInstalacion();
 iniciarIndicadorConexion();
+iniciarSincronizacion();
 
 ruta('', vistaInicio, 'inicio');
 ruta('paradas', vistaParadas, 'paradas');

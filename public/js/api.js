@@ -1,6 +1,8 @@
 // Acceso a los datos remotos del catálogo.
 // Con servidor Node: /api/paradas.  En GitHub Pages (estático): data/paradas.json.
 // Cada respuesta correcta se respalda en IndexedDB; si la red falla se usa el respaldo.
+import { url } from './util.js';
+
 const DB = window.RutaDB;
 
 let servidorDisponible; // undefined = aún no se sabe
@@ -9,7 +11,7 @@ let servidorDisponible; // undefined = aún no se sabe
 export async function hayServidor() {
   if (servidorDisponible !== undefined) return servidorDisponible;
   try {
-    const r = await fetch('api/salud', { cache: 'no-store' });
+    const r = await fetch(url('api/salud'), { cache: 'no-store' });
     servidorDisponible = r.ok && (r.headers.get('content-type') || '').includes('json');
   } catch {
     // Sin red no podemos saberlo: recordamos lo último que vimos
@@ -19,9 +21,10 @@ export async function hayServidor() {
   return servidorDisponible;
 }
 
-async function pedirJSON(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${url} respondió ${r.status}`);
+async function pedirJSON(relativa) {
+  const direccion = url(relativa);
+  const r = await fetch(direccion);
+  if (!r.ok) throw new Error(`${relativa} respondió ${r.status}`);
   return r.json();
 }
 
@@ -60,5 +63,5 @@ export async function obtenerParada(id) {
 
 /** Enlace a la ficha: SSR si hay servidor, CSR (hash) si es sitio estático. */
 export async function enlaceFicha(id) {
-  return (await hayServidor()) ? `parada/${encodeURIComponent(id)}` : `#/parada/${encodeURIComponent(id)}`;
+  return (await hayServidor()) ? url(`parada/${encodeURIComponent(id)}`) : url(`#/parada/${encodeURIComponent(id)}`);
 }

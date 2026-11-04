@@ -21,3 +21,7 @@ export function toast(mensaje, ms = 3000) {
 
 export const uuid = () =>
   crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+// Raíz de la app (carpeta que contiene /js). Sirve en "/", en "/parada/x" (SSR) y en "/repo/" (GitHub Pages).
+export const BASE = new URL('../', import.meta.url).href;
+export const url = (relativa) => new URL(relativa, BASE).href;

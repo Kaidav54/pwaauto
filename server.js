@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const { paginaFicha, paginaNoEncontrada } = require('./server/render');
+const { leer, escribir } = require('./server/almacen');
 
 const app = express();
 const PUERTO = process.env.PORT || 3000;
@@ -26,11 +27,48 @@ app.get('/api/paradas/:id', (req, res) => {
   res.json(parada);
 });
 
+// ---------- Reseñas ----------
+const resenasDe = (paradaId) =>
+  leer('resenas.json', [])
+    .filter((r) => r.paradaId === paradaId)
+    .sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+app.get('/api/paradas/:id/resenas', (req, res) => {
+  if (!buscarParada(req.params.id)) return res.status(404).json({ error: 'Parada no encontrada' });
+  res.json(resenasDe(req.params.id));
+});
+
+app.post('/api/resenas', (req, res) => {
+  const { id, paradaId, autor, texto, fecha } = req.body || {};
+  const textoLimpio = String(texto || '').trim();
+  if (!id || typeof id !== 'string' || id.length > 64) return res.status(400).json({ error: 'id inválido' });
+  if (!buscarParada(paradaId)) return res.status(400).json({ error: 'paradaId inválido' });
+  if (textoLimpio.length < 3 || textoLimpio.length > 500) return res.status(400).json({ error: 'El comentario debe tener entre 3 y 500 caracteres' });
+
+  const todas = leer('resenas.json', []);
+  // Idempotente: si Background Sync reintenta el mismo envío, no se duplica
+  const existente = todas.find((r) => r.id === id);
+  if (existente) return res.status(200).json(existente);
+
+  const fechaValida = !Number.isNaN(Date.parse(fecha)) ? new Date(fecha).toISOString() : new Date().toISOString();
+  const resena = {
+    id,
+    paradaId,
+    autor: String(autor || '').trim().slice(0, 40) || 'Anónimo',
+    texto: textoLimpio,
+    fecha: fechaValida,
+    recibida: new Date().toISOString(),
+  };
+  todas.push(resena);
+  escribir('resenas.json', todas);
+  res.status(201).json(resena);
+});
+
 // ---------- SSR: ficha generada en el servidor ----------
 app.get('/parada/:id', (req, res) => {
   const parada = buscarParada(req.params.id);
   if (!parada) return res.status(404).type('html').send(paginaNoEncontrada());
-  res.type('html').send(paginaFicha(parada));
+  res.type('html').send(paginaFicha(parada, resenasDe(parada.id)));
 });
 
 if (require.main === module) {

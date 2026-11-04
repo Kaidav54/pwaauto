@@ -1,12 +1,13 @@
 // Registro del service worker
+import { url } from './util.js';
 export async function registrarServiceWorker() {
   if (!('serviceWorker' in navigator)) {
     console.warn('[SW] Este navegador no soporta service workers');
     return null;
   }
   try {
-    // Ruta relativa: funciona en localhost (/) y en GitHub Pages (/repo/)
-    const registro = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+    // Rutas relativas a la raíz de la app: funcionan en localhost (/), en /parada/x y en GitHub Pages (/repo/)
+    const registro = await navigator.serviceWorker.register(url('sw.js'), { scope: url('./') });
     console.log('[SW] Registrado con alcance', registro.scope);
     return registro;
   } catch (error) {

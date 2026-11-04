@@ -2,9 +2,12 @@
 //  - la ficha CSR (vistas.js) y
 //  - la hidratación de la ficha SSR (Fase 11).
 import { $, toast } from './util.js';
-import { guardarPref } from './prefs.js';
+import { guardarPref, leerPref } from './prefs.js';
+import { cargarResenas, publicarResena } from './resenas.js';
+import { hayServidor } from './api.js';
 
 const DB = window.RutaDB;
+const { listaResenasHTML } = window.PlantillaFicha;
 
 async function botonFavorito(raiz, parada) {
   const acciones = $('[data-acciones]', raiz);
@@ -25,7 +28,53 @@ async function botonFavorito(raiz, parada) {
   acciones.prepend(boton);
 }
 
+async function seccionResenas(raiz, parada) {
+  const lista = $('[data-lista-resenas]', raiz);
+  const form = $('[data-form-resena]', raiz);
+  const estado = $('[data-estado-resena]', raiz);
+  if (!lista || !form) return;
+
+  const refrescar = async () => {
+    lista.innerHTML = listaResenasHTML(await cargarResenas(parada.id));
+  };
+  await refrescar();
+
+  if (!(await hayServidor())) {
+    estado.textContent = 'Versión estática (GitHub Pages): tu comentario queda guardado en este dispositivo y se envía cuando uses la app con su servidor.';
+  }
+
+  form.autor.value = leerPref('autor') || '';
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const texto = form.texto.value.trim();
+    if (texto.length < 3) return toast('Escribe al menos 3 caracteres');
+    const autor = form.autor.value.trim();
+    guardarPref('autor', autor);
+    const boton = form.querySelector('button[type=submit]');
+    boton.disabled = true;
+    try {
+      const { modo } = await publicarResena({ paradaId: parada.id, autor, texto });
+      form.texto.value = '';
+      await refrescar();
+      toast(
+        modo === 'enviada' ? '✅ Comentario publicado' :
+        navigator.onLine ? '📤 Enviando comentario…' : '⏳ Sin conexión: se enviará al recuperar la red'
+      );
+    } catch (err) {
+      console.error(err);
+      toast('No se pudo guardar el comentario');
+    } finally {
+      boton.disabled = false;
+    }
+  });
+
+  // Cuando el SW (o la página) confirma el envío, se vuelve a pintar la lista
+  const alSincronizar = () => refrescar();
+  window.addEventListener('resenas-sincronizadas', alSincronizar);
+  window.addEventListener('hashchange', () => window.removeEventListener('resenas-sincronizadas', alSincronizar), { once: true });
+}
+
 export async function activarAccionesFicha(raiz, parada) {
   guardarPref('ultimaParada', parada.id);
-  await botonFavorito(raiz, parada);
+  await Promise.all([botonFavorito(raiz, parada), seccionResenas(raiz, parada)]);
 }

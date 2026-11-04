@@ -1,0 +1,139 @@
+[
+  {
+    "id": "terminal-centro",
+    "nombre": "Terminal Centro",
+    "tipo": "autobus",
+    "direccion": "Av. Central esq. 5 de Mayo",
+    "zona": "Centro",
+    "lat": 19.4326,
+    "lng": -99.1332,
+    "iluminada": true,
+    "techada": true,
+    "accesible": true,
+    "descripcion": "Principal punto de transbordo de la ciudad. Taquilla de recarga de tarjeta y baños públicos.",
+    "rutas": [
+      { "ruta": "1", "nombre": "Centro – Universidad", "primera": "05:00", "ultima": "23:00", "frecuencia": "8–10 min", "tarifa": 12 },
+      { "ruta": "12", "nombre": "Centro – Col. Norte", "primera": "05:30", "ultima": "22:30", "frecuencia": "12–15 min", "tarifa": 12 },
+      { "ruta": "E1", "nombre": "Exprés Centro – Estación del Tren", "primera": "06:00", "ultima": "21:00", "frecuencia": "20 min", "tarifa": 15 }
+    ]
+  },
+  {
+    "id": "mercado-municipal",
+    "nombre": "Base de combis Mercado Municipal",
+    "tipo": "combi",
+    "direccion": "Calle Hidalgo 210, frente al mercado",
+    "zona": "Centro",
+    "lat": 19.4270,
+    "lng": -99.1276,
+    "iluminada": true,
+    "techada": false,
+    "accesible": false,
+    "descripcion": "Base de combis de las rutas de barrio. Mucho movimiento en horario de mercado (7:00–15:00).",
+    "rutas": [
+      { "ruta": "C3", "nombre": "Mercado – Plaza Sur", "primera": "05:00", "ultima": "21:30", "frecuencia": "5–8 min", "tarifa": 10 },
+      { "ruta": "C7", "nombre": "Mercado – Hospital General", "primera": "05:30", "ultima": "22:00", "frecuencia": "10 min", "tarifa": 10 }
+    ]
+  },
+  {
+    "id": "hospital-general",
+    "nombre": "Parada Hospital General",
+    "tipo": "autobus",
+    "direccion": "Av. de la Salud 1500, acceso Urgencias",
+    "zona": "Poniente",
+    "lat": 19.4115,
+    "lng": -99.1520,
+    "iluminada": true,
+    "techada": true,
+    "accesible": true,
+    "descripcion": "Parada con rampa y bancas. Servicio nocturno de la ruta 20.",
+    "rutas": [
+      { "ruta": "20", "nombre": "Circuito Interior", "primera": "00:00", "ultima": "23:59", "frecuencia": "15–30 min (24 h)", "tarifa": 12 },
+      { "ruta": "C7", "nombre": "Mercado – Hospital General", "primera": "05:30", "ultima": "22:00", "frecuencia": "10 min", "tarifa": 10 }
+    ]
+  },
+  {
+    "id": "universidad",
+    "nombre": "Parada Universidad",
+    "tipo": "autobus",
+    "direccion": "Blvd. Universitario, puerta 3",
+    "zona": "Poniente",
+    "lat": 19.4205,
+    "lng": -99.1610,
+    "iluminada": true,
+    "techada": true,
+    "accesible": true,
+    "descripcion": "Muy concurrida en entrada y salida de clases (7:00 y 14:00).",
+    "rutas": [
+      { "ruta": "1", "nombre": "Centro – Universidad", "primera": "05:00", "ultima": "23:00", "frecuencia": "8–10 min", "tarifa": 12 },
+      { "ruta": "20", "nombre": "Circuito Interior", "primera": "00:00", "ultima": "23:59", "frecuencia": "15–30 min (24 h)", "tarifa": 12 }
+    ]
+  },
+  {
+    "id": "colonia-norte",
+    "nombre": "Base de combis Colonia Norte",
+    "tipo": "combi",
+    "direccion": "Av. Norte 45 y Calle Pino",
+    "zona": "Norte",
+    "lat": 19.4485,
+    "lng": -99.1400,
+    "iluminada": false,
+    "techada": false,
+    "accesible": false,
+    "descripcion": "Base de terracería, poca iluminación por la noche.",
+    "rutas": [
+      { "ruta": "12", "nombre": "Centro – Col. Norte", "primera": "05:30", "ultima": "22:30", "frecuencia": "12–15 min", "tarifa": 12 },
+      { "ruta": "C9", "nombre": "Col. Norte – Estación del Tren", "primera": "05:00", "ultima": "21:00", "frecuencia": "10 min", "tarifa": 10 }
+    ]
+  },
+  {
+    "id": "plaza-sur",
+    "nombre": "Parada Plaza Sur",
+    "tipo": "autobus",
+    "direccion": "Av. Sur 900, frente a Plaza Comercial",
+    "zona": "Sur",
+    "lat": 19.4010,
+    "lng": -99.1290,
+    "iluminada": true,
+    "techada": true,
+    "accesible": true,
+    "descripcion": "Parada con cámaras de seguridad y botón de emergencia.",
+    "rutas": [
+      { "ruta": "5", "nombre": "Plaza Sur – Centro", "primera": "05:15", "ultima": "22:45", "frecuencia": "10 min", "tarifa": 12 },
+      { "ruta": "C3", "nombre": "Mercado – Plaza Sur", "primera": "05:00", "ultima": "21:30", "frecuencia": "5–8 min", "tarifa": 10 }
+    ]
+  },
+  {
+    "id": "estacion-tren",
+    "nombre": "Paradero Estación del Tren",
+    "tipo": "autobus",
+    "direccion": "Calz. Ferrocarril s/n",
+    "zona": "Oriente",
+    "lat": 19.4440,
+    "lng": -99.1210,
+    "iluminada": true,
+    "techada": true,
+    "accesible": true,
+    "descripcion": "Conexión con el tren suburbano. Andenes A (exprés) y B (combis).",
+    "rutas": [
+      { "ruta": "E1", "nombre": "Exprés Centro – Estación del Tren", "primera": "06:00", "ultima": "21:00", "frecuencia": "20 min", "tarifa": 15 },
+      { "ruta": "C9", "nombre": "Col. Norte – Estación del Tren", "primera": "05:00", "ultima": "21:00", "frecuencia": "10 min", "tarifa": 10 }
+    ]
+  },
+  {
+    "id": "parque-alameda",
+    "nombre": "Parada Parque Alameda",
+    "tipo": "autobus",
+    "direccion": "Av. Juárez, costado del parque",
+    "zona": "Centro",
+    "lat": 19.4357,
+    "lng": -99.1440,
+    "iluminada": true,
+    "techada": false,
+    "accesible": true,
+    "descripcion": "Parada al aire libre junto al parque. Ideal para transbordar a la ruta 5.",
+    "rutas": [
+      { "ruta": "5", "nombre": "Plaza Sur – Centro", "primera": "05:15", "ultima": "22:45", "frecuencia": "10 min", "tarifa": 12 },
+      { "ruta": "20", "nombre": "Circuito Interior", "primera": "00:00", "ultima": "23:59", "frecuencia": "15–30 min (24 h)", "tarifa": 12 }
+    ]
+  }
+]

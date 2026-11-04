@@ -64,6 +64,9 @@ app.post('/api/resenas', (req, res) => {
   res.status(201).json(resena);
 });
 
+// ---------- Notificaciones push ----------
+app.use('/api/push', require('./server/push').router);
+
 // ---------- SSR: ficha generada en el servidor ----------
 app.get('/parada/:id', (req, res) => {
   const parada = buscarParada(req.params.id);

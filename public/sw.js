@@ -5,7 +5,7 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
 
-const VERSION = 'v4'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v5'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -32,6 +32,8 @@ const SHELL = [
   './js/plantilla-ficha.js',
   './js/conexion.js',
   './js/resenas.js',
+  './js/notificaciones.js',
+  './js/vista-avisos.js',
   './data/paradas.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -194,4 +196,61 @@ self.addEventListener('message', (evento) => {
 // Al activarse, toma el control de las pestañas abiertas sin esperar a recargarlas
 self.addEventListener('activate', (evento) => {
   evento.waitUntil(self.clients.claim());
+});
+
+// ---------- Notificaciones push ----------
+const ICONOS_AVISO = { desvio: '↪️', retraso: '⏱️', obras: '🚧', info: 'ℹ️' };
+
+async function guardarAviso(aviso) {
+  const lista = (await self.RutaDB.leerMeta('avisos').catch(() => null)) || [];
+  lista.unshift(aviso);
+  await self.RutaDB.ponerMeta('avisos', lista.slice(0, 20));
+}
+
+self.addEventListener('push', (evento) => {
+  let aviso;
+  try {
+    aviso = evento.data ? evento.data.json() : null;
+  } catch {
+    aviso = { titulo: 'RutaExpress', cuerpo: evento.data?.text() };
+  }
+  aviso = { id: `${Date.now()}`, titulo: 'RutaExpress', cuerpo: 'Hay un aviso nuevo.', url: './#/avisos', tipo: 'info', fecha: new Date().toISOString(), ...aviso };
+
+  evento.waitUntil(
+    (async () => {
+      await guardarAviso(aviso);
+      const clientes = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      clientes.forEach((c) => c.postMessage({ tipo: 'AVISO_RECIBIDO', aviso }));
+      await self.registration.showNotification(`${ICONOS_AVISO[aviso.tipo] || ''} ${aviso.titulo}`.trim(), {
+        body: aviso.cuerpo,
+        icon: './icons/icon-192.png',
+        badge: './icons/badge-72.png',
+        tag: `aviso-${aviso.tipo}`,
+        renotify: true,
+        vibrate: [200, 100, 200],
+        data: { url: new URL(aviso.url, self.location).href },
+        actions: [
+          { action: 'ver', title: 'Ver detalles' },
+          { action: 'cerrar', title: 'Cerrar' },
+        ],
+      });
+    })()
+  );
+});
+
+self.addEventListener('notificationclick', (evento) => {
+  evento.notification.close();
+  if (evento.action === 'cerrar') return;
+  const destino = evento.notification.data?.url || BASE;
+  evento.waitUntil(
+    (async () => {
+      const clientes = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      const abierto = clientes.find((c) => c.url.startsWith(BASE));
+      if (abierto) {
+        await abierto.focus();
+        return abierto.navigate?.(destino).catch(() => {});
+      }
+      return self.clients.openWindow(destino);
+    })()
+  );
 });

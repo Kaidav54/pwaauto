@@ -5,6 +5,7 @@ import { vistaInicio, vistaParadas, vistaFicha, vistaAjustes, vistaPendiente } f
 import { iniciarInstalacion } from './instalacion.js';
 import { ocultarSplash } from './splash.js';
 import { aplicarTema } from './prefs.js';
+import { vistaAvisos } from './vista-avisos.js';
 import { iniciarIndicadorConexion } from './conexion.js';
 import { iniciarSincronizacion } from './resenas.js';
 
@@ -17,7 +18,7 @@ ruta('', vistaInicio, 'inicio');
 ruta('paradas', vistaParadas, 'paradas');
 ruta('parada/:id', vistaFicha, 'paradas');
 ruta('cerca', vistaPendiente('Cerca de mí'), 'cerca');
-ruta('avisos', vistaPendiente('Avisos'), 'avisos');
+ruta('avisos', vistaAvisos, 'avisos');
 ruta('ajustes', vistaAjustes, 'ajustes');
 
 iniciarRouter().finally(ocultarSplash);

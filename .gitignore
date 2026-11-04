@@ -1,0 +1,10 @@
+node_modules/
+npm-debug.log*
+.env
+.DS_Store
+Thumbs.db
+
+# Claves VAPID privadas y datos generados en tiempo de ejecución
+.vapid.json
+data/resenas.json
+data/suscripciones.json

@@ -1,0 +1,24 @@
+{
+  "name": "rutaexpress",
+  "version": "1.0.0",
+  "description": "RutaExpress: PWA guía de paradas de transporte y rutas locales",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "iconos": "node scripts/generar-iconos.js",
+    "vapid": "node scripts/generar-vapid.js",
+    "test": "node --test test/"
+  },
+  "keywords": ["pwa", "service-worker", "transporte"],
+  "author": "davkaito0929",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.22.3",
+    "web-push": "^3.6.7"
+  }
+}

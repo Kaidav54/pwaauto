@@ -8,3 +8,6 @@ Thumbs.db
 .vapid.json
 data/resenas.json
 data/suscripciones.json
+
+# Fotos originales (pesadas); se publican solo las optimizadas de public/img
+assets/

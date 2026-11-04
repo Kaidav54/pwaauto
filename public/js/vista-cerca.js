@@ -7,7 +7,7 @@ import {
   soportaGPS, obtenerPosicion, ordenarPorCercania, formatoDistancia, minutosCaminando, rumbo, vibrar,
 } from './dispositivo.js';
 
-const { icono } = window.PlantillaFicha;
+const { icono, svg, etiquetaRuta } = window.PlantillaFicha;
 
 export async function vistaCerca(c) {
   c.innerHTML = `
@@ -16,7 +16,7 @@ export async function vistaCerca(c) {
       <p>Usamos el GPS de tu dispositivo para encontrar la parada o base de combis más cercana.
          Tu ubicación no sale de tu teléfono.</p>
       <div class="botones">
-        <button class="boton" id="btn-gps" ${soportaGPS() ? '' : 'disabled'}>📍 Buscar la parada más cercana</button>
+        <button class="boton" id="btn-gps" ${soportaGPS() ? '' : 'disabled'}>${svg('cerca')}Buscar la parada más cercana</button>
       </div>
       ${soportaGPS() ? '' : '<p class="suave">Este dispositivo no tiene geolocalización.</p>'}
     </section>
@@ -29,7 +29,7 @@ async function buscar(c) {
   const boton = $('#btn-gps', c);
   const resultado = $('#resultado', c);
   boton.disabled = true;
-  resultado.innerHTML = '<div class="cargando">🛰️ Obteniendo tu ubicación…</div>';
+  resultado.innerHTML = '<div class="cargando">Buscando tu ubicación…</div>';
   try {
     const [pos, paradas] = await Promise.all([obtenerPosicion(), obtenerParadas()]);
     const ordenadas = ordenarPorCercania(paradas, pos);
@@ -42,21 +42,21 @@ async function buscar(c) {
 
     resultado.innerHTML = `
       <section class="tarjeta">
-        <p class="suave pequeno">Tu parada más cercana</p>
+        <span class="kicker">Tu parada más cercana</span>
         <div class="ficha__cabecera">
-          <div class="ficha__icono" aria-hidden="true">${icono(masCercana.tipo)}</div>
+          <div class="ficha__icono" data-tipo="${esc(masCercana.tipo)}">${icono(masCercana.tipo)}</div>
           <div>
             <h2>${esc(masCercana.nombre)}</h2>
             <div><strong>${formatoDistancia(masCercana.distancia)}</strong> al ${rumbo(pos, masCercana)}
               · unos ${minutosCaminando(masCercana.distancia)} min caminando</div>
-            <div class="suave">📍 ${esc(masCercana.direccion)}</div>
-            <div class="parada__rutas">${masCercana.rutas.map((r) => `<span class="etiqueta">${esc(r.ruta)}</span>`).join('')}</div>
+            <div class="suave">${esc(masCercana.direccion)}</div>
+            <div class="parada__rutas">${masCercana.rutas.map((r) => etiquetaRuta(r.ruta)).join('')}</div>
           </div>
         </div>
         <div class="botones">
           <a class="boton" href="${esc(href)}">Ver rutas y horarios</a>
           <a class="boton boton--sec" target="_blank" rel="noopener"
-             href="https://www.google.com/maps/dir/?api=1&origin=${pos.lat},${pos.lng}&destination=${masCercana.lat},${masCercana.lng}&travelmode=walking">🧭 Cómo llegar</a>
+             href="https://www.google.com/maps/dir/?api=1&origin=${pos.lat},${pos.lng}&destination=${masCercana.lat},${masCercana.lng}&travelmode=walking">${svg('cerca')}Cómo llegar a pie</a>
         </div>
         <p class="suave pequeno">Precisión del GPS: ±${Math.round(pos.precision)} m</p>
         <div id="mapa-cerca" class="mapa" role="region" aria-label="Mapa de tu ubicación y la parada más cercana"></div>
@@ -69,7 +69,7 @@ async function buscar(c) {
       $('#mapa-cerca', c)?.remove();
     });
   } catch (e) {
-    resultado.innerHTML = `<section class="tarjeta estado-vacio"><p>⚠️ ${esc(e.message)}</p></section>`;
+    resultado.innerHTML = `<section class="tarjeta estado-vacio"><p>${esc(e.message)}</p></section>`;
     toast(e.message);
   } finally {
     boton.disabled = false;

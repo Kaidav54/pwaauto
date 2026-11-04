@@ -40,7 +40,7 @@ function png(ancho, alto, rgba) {
 
 // ---------- Dibujo del ícono (coordenadas normalizadas 0..1) ----------
 const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16), 255];
-const VERDE = hex('#0f766e'), BLANCO = hex('#ffffff'), OSCURO = hex('#134e4a'), AMBAR = hex('#f59e0b');
+const TERRACOTA = hex('#b8452a'), CREMA = hex('#f6efe3'), OCRE = hex('#e9a23b');
 const TRANSP = [0, 0, 0, 0];
 
 const enRectRed = (x, y, x0, y0, x1, y1, r) => {
@@ -50,22 +50,23 @@ const enRectRed = (x, y, x0, y0, x1, y1, r) => {
 };
 const enCirculo = (x, y, cx, cy, r) => (x - cx) ** 2 + (y - cy) ** 2 <= r * r;
 
+// Marca: arco de misión (portal) + camino punteado, sobre terracota.
 // escala < 1 encoge el dibujo para dejar zona segura (íconos maskable)
 function colorEn(x, y, { maskable }) {
   const fondo = maskable ? true : enRectRed(x, y, 0, 0, 1, 1, 0.22);
   if (!fondo) return TRANSP;
-  const s = maskable ? 0.72 : 0.92;
+  const s = maskable ? 0.70 : 0.90;
   const u = (x - 0.5) / s + 0.5, v = (y - 0.5) / s + 0.5;
-  // ruedas
-  if (enRectRed(u, v, 0.28, 0.74, 0.40, 0.84, 0.03) || enRectRed(u, v, 0.60, 0.74, 0.72, 0.84, 0.03)) return OSCURO;
-  // carrocería del autobús
-  if (enRectRed(u, v, 0.22, 0.16, 0.78, 0.78, 0.09)) {
-    if (enRectRed(u, v, 0.28, 0.26, 0.72, 0.50, 0.04)) return OSCURO;          // parabrisas
-    if (enRectRed(u, v, 0.36, 0.19, 0.64, 0.23, 0.02)) return OSCURO;          // letrero de ruta
-    if (enCirculo(u, v, 0.33, 0.64, 0.045) || enCirculo(u, v, 0.67, 0.64, 0.045)) return AMBAR; // faros
-    return BLANCO;
-  }
-  return VERDE;
+  const G = 0.085;              // grosor del trazo del arco
+  const cx = 0.5, cy = 0.44, r = 0.25;
+  // camino punteado (ocre) en el centro del portal
+  if (Math.abs(u - cx) < 0.045 && v > 0.62 && v < 0.84 && ((v - 0.62) % 0.11) < 0.065) return OCRE;
+  // patas del arco
+  if (v >= cy && v <= 0.84 && (Math.abs(u - (cx - r)) < G / 2 || Math.abs(u - (cx + r)) < G / 2)) return CREMA;
+  // medio círculo superior
+  const d = Math.hypot(u - cx, v - cy);
+  if (v < cy && Math.abs(d - r) < G / 2) return CREMA;
+  return TERRACOTA;
 }
 
 function dibujar(tam, opciones) {

@@ -3,6 +3,8 @@
 // Las teselas (imágenes del mapa) se guardan en caché a medida que se visitan (ver sw.js).
 import { url, esc } from './util.js';
 
+const { icono, etiquetaRuta } = window.PlantillaFicha;
+
 let promesaLeaflet = null;
 
 /** Carga leaflet.css y leaflet.js solo cuando hace falta un mapa. */
@@ -26,13 +28,13 @@ export function cargarLeaflet() {
   return promesaLeaflet;
 }
 
-const COLOR_TIPO = { autobus: '#0f766e', combi: '#c2410c' };
+const COLOR_TIPO = { autobus: '#b8452a', combi: '#2f5d50' };
 
 function iconoParada(L, p, { destacada = false } = {}) {
   return L.divIcon({
     className: '',
-    html: `<span class="pin${destacada ? ' pin--destacada' : ''}" style="--pin:${COLOR_TIPO[p.tipo] || '#0f766e'}">
-             <span class="pin__icono">${p.tipo === 'combi' ? '🚐' : '🚌'}</span></span>`,
+    html: `<span class="pin${destacada ? ' pin--destacada' : ''}" style="--pin:${COLOR_TIPO[p.tipo] || '#b8452a'}">
+             ${icono(p.tipo)}</span>`,
     iconSize: destacada ? [44, 44] : [36, 36],
     iconAnchor: destacada ? [22, 44] : [18, 36],
     popupAnchor: [0, destacada ? -40 : -32],
@@ -40,7 +42,7 @@ function iconoParada(L, p, { destacada = false } = {}) {
 }
 
 function popupParada(p, href) {
-  const rutas = p.rutas.map((r) => `<span class="etiqueta">${esc(r.ruta)}</span>`).join(' ');
+  const rutas = p.rutas.map((r) => etiquetaRuta(r.ruta)).join(' ');
   return `<div class="popup">
     <strong>${esc(p.nombre)}</strong><br>
     <span class="suave pequeno">${esc(p.direccion)}</span>
@@ -97,8 +99,8 @@ export async function mapaParadas(contenedor, paradas, enlaces) {
 export async function mapaCerca(contenedor, pos, masCercana, otras, enlaces) {
   const { L, mapa } = await crearMapa(contenedor);
   const yo = [pos.lat, pos.lng];
-  L.circle(yo, { radius: pos.precision, color: '#2563eb', weight: 1, fillOpacity: 0.12 }).addTo(mapa);
-  L.circleMarker(yo, { radius: 8, color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1 })
+  L.circle(yo, { radius: pos.precision, color: '#3d6f9e', weight: 1, fillOpacity: 0.12 }).addTo(mapa);
+  L.circleMarker(yo, { radius: 8, color: '#fff', weight: 3, fillColor: '#3d6f9e', fillOpacity: 1 })
     .bindTooltip('Estás aquí', { direction: 'top' })
     .addTo(mapa);
 
@@ -106,7 +108,7 @@ export async function mapaCerca(contenedor, pos, masCercana, otras, enlaces) {
     L.marker([p.lat, p.lng], { icon: iconoParada(L, p), title: p.nombre }).bindPopup(popupParada(p, enlaces[p.id])).addTo(mapa)
   );
   const destino = [masCercana.lat, masCercana.lng];
-  L.polyline([yo, destino], { color: '#2563eb', weight: 4, dashArray: '8 8' }).addTo(mapa);
+  L.polyline([yo, destino], { color: '#2a1d14', weight: 4, dashArray: '2 9', lineCap: 'round' }).addTo(mapa);
   L.marker(destino, { icon: iconoParada(L, masCercana, { destacada: true }), title: masCercana.nombre, zIndexOffset: 1000 })
     .bindPopup(popupParada(masCercana, enlaces[masCercana.id]))
     .bindTooltip(masCercana.nombre, { permanent: true, direction: 'top', offset: [0, -42] })

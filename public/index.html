@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>RutaExpress</title>
-  <meta name="description" content="Guía de paradas de transporte, rutas, horarios y tarifas de tu ciudad.">
-  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Paradas, combis, horarios y tarifas del transporte en Jalpan de Serra, Querétaro.">
+  <meta name="theme-color" content="#b8452a">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -13,6 +13,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="RutaExpress">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preload" href="fonts/bricolage-variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
   <script>
     // Captura temprana del evento de instalación: puede llegar antes de que carguen los módulos
@@ -29,34 +30,32 @@
 <body>
   <!-- Splash dentro de la app (el del sistema lo genera el navegador a partir del manifiesto) -->
   <div id="splash" class="splash" role="status" aria-label="Cargando RutaExpress">
-    <img src="icons/icon-192.png" alt="" width="120" height="120">
+    <svg class="marca__logo" aria-hidden="true"><use href="img/iconos.svg#i-marca"></use></svg>
     <div class="splash__nombre">RutaExpress</div>
-    <div>Tu guía de paradas y rutas</div>
+    <div class="splash__cinta"></div>
+    <div class="splash__lugar">Jalpan de Serra</div>
   </div>
 
   <!-- ===== APP SHELL: cabecera, navegación, contenido y pie ===== -->
   <header class="barra">
     <a class="marca" href="#/">
-      <span class="marca__logo" aria-hidden="true">🚌</span>
-      <span class="marca__nombre">RutaExpress</span>
+      <svg class="marca__logo" aria-hidden="true"><use href="img/iconos.svg#i-marca"></use></svg>
+      <span class="marca__texto"><span class="marca__nombre">RutaExpress</span><span class="marca__lugar">Jalpan de Serra</span></span>
     </a>
     <span class="conexion" data-conexion role="status" aria-live="polite" hidden></span>
   </header>
 
   <main id="contenido" class="contenido" tabindex="-1">
     <!-- Las vistas se dibujan aquí desde JavaScript (CSR) -->
-    <section class="tarjeta">
-      <h1>Bienvenido a RutaExpress</h1>
-      <p>Cargando…</p>
-    </section>
+    <div class="cargando">Cargando…</div>
   </main>
 
   <nav class="menu" aria-label="Navegación principal">
-    <a href="#/" data-ruta="inicio"><span aria-hidden="true">🏠</span>Inicio</a>
-    <a href="#/paradas" data-ruta="paradas"><span aria-hidden="true">🚏</span>Paradas</a>
-    <a href="#/cerca" data-ruta="cerca"><span aria-hidden="true">📍</span>Cerca</a>
-    <a href="#/avisos" data-ruta="avisos"><span aria-hidden="true">🔔</span>Avisos</a>
-    <a href="#/ajustes" data-ruta="ajustes"><span aria-hidden="true">⚙️</span>Ajustes</a>
+    <a href="#/" data-ruta="inicio"><svg class="ico" aria-hidden="true"><use href="img/iconos.svg#i-inicio"></use></svg>Inicio</a>
+    <a href="#/paradas" data-ruta="paradas"><svg class="ico" aria-hidden="true"><use href="img/iconos.svg#i-paradas"></use></svg>Paradas</a>
+    <a href="#/cerca" data-ruta="cerca"><svg class="ico" aria-hidden="true"><use href="img/iconos.svg#i-cerca"></use></svg>Cerca</a>
+    <a href="#/avisos" data-ruta="avisos"><svg class="ico" aria-hidden="true"><use href="img/iconos.svg#i-avisos"></use></svg>Avisos</a>
+    <a href="#/ajustes" data-ruta="ajustes"><svg class="ico" aria-hidden="true"><use href="img/iconos.svg#i-ajustes"></use></svg>Ajustes</a>
   </nav>
 </body>
 </html>

@@ -11,7 +11,7 @@ function pagina({ titulo, descripcion, cuerpo, datos }) {
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>${esc(titulo)}</title>
   <meta name="description" content="${esc(descripcion)}">
-  <meta name="theme-color" content="#0f766e">
+  <meta name="theme-color" content="#b8452a">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -22,18 +22,21 @@ function pagina({ titulo, descripcion, cuerpo, datos }) {
 </head>
 <body data-ssr="ficha">
   <header class="barra">
-    <a class="marca" href="/#/"><span class="marca__logo" aria-hidden="true">🚌</span><span class="marca__nombre">RutaExpress</span></a>
+    <a class="marca" href="/#/">
+      <svg class="marca__logo" aria-hidden="true"><use href="/img/iconos.svg#i-marca"></use></svg>
+      <span class="marca__texto"><span class="marca__nombre">RutaExpress</span><span class="marca__lugar">Jalpan de Serra</span></span>
+    </a>
     <span class="conexion" data-conexion role="status" aria-live="polite" hidden></span>
   </header>
   <main id="contenido" class="contenido">
 ${cuerpo}
   </main>
   <nav class="menu" aria-label="Navegación principal">
-    <a href="/#/"><span aria-hidden="true">🏠</span>Inicio</a>
-    <a href="/#/paradas" aria-current="page"><span aria-hidden="true">🚏</span>Paradas</a>
-    <a href="/#/cerca"><span aria-hidden="true">📍</span>Cerca</a>
-    <a href="/#/avisos"><span aria-hidden="true">🔔</span>Avisos</a>
-    <a href="/#/ajustes"><span aria-hidden="true">⚙️</span>Ajustes</a>
+    <a href="/#/"><svg class="ico" aria-hidden="true"><use href="/img/iconos.svg#i-inicio"></use></svg>Inicio</a>
+    <a href="/#/paradas" aria-current="page"><svg class="ico" aria-hidden="true"><use href="/img/iconos.svg#i-paradas"></use></svg>Paradas</a>
+    <a href="/#/cerca"><svg class="ico" aria-hidden="true"><use href="/img/iconos.svg#i-cerca"></use></svg>Cerca</a>
+    <a href="/#/avisos"><svg class="ico" aria-hidden="true"><use href="/img/iconos.svg#i-avisos"></use></svg>Avisos</a>
+    <a href="/#/ajustes"><svg class="ico" aria-hidden="true"><use href="/img/iconos.svg#i-ajustes"></use></svg>Ajustes</a>
   </nav>
   <script type="application/json" id="datos-ssr">${json}</script>
 </body>

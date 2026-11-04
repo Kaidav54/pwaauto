@@ -1,5 +1,5 @@
 // Vistas renderizadas en el navegador (CSR)
-import { esc, $, $$, toast } from './util.js';
+import { esc, $, $$, toast, url } from './util.js';
 import { obtenerParadas, obtenerParada, enlaceFicha } from './api.js';
 import { estadoInstalacion, alCambiarInstalacion, instalar, instruccionesManuales } from './instalacion.js';
 import { leerPref, guardarPref, borrarPrefs } from './prefs.js';
@@ -7,26 +7,53 @@ import { activarAccionesFicha } from './ficha-acciones.js';
 import { versionServiceWorker } from './registro-sw.js';
 import { mapaParadas } from './mapa.js';
 
-const { icono, tipoTexto, fichaHTML } = window.PlantillaFicha;
+const { icono, svg, tipoTexto, fichaHTML, etiquetaRuta } = window.PlantillaFicha;
+
+const img = (nombre, anchos, tam) =>
+  `srcset="${anchos.map((a) => `${url(`img/${nombre}-${a}.webp`)} ${a}w`).join(', ')}" sizes="${tam}" src="${url(`img/${nombre}-${anchos[0]}.webp`)}"`;
 
 // ---------- Inicio (Home) ----------
 export async function vistaInicio(c) {
   c.innerHTML = `
-    <section class="tarjeta hero">
-      <h1>¿A dónde vas hoy?</h1>
-      <p>Consulta paradas, rutas, horarios y tarifas de tu ciudad, incluso sin conexión.</p>
-      <div class="botones">
-        <a class="boton" href="#/paradas">Ver paradas</a>
-        <button class="boton boton--sec" id="btn-instalar" hidden>📲 Instalar app</button>
+    <section class="portada">
+      <img ${img('jalpan-centro', [640, 1280, 1920], '100vw')} alt="Vista del centro de Jalpan de Serra con la sierra al fondo" fetchpriority="high">
+      <div class="portada__texto">
+        <span class="kicker">Jalpan de Serra · Sierra Gorda</span>
+        <h1>Muévete por la sierra</h1>
+        <p>Paradas, combis y corridas con horarios y tarifas. Funciona aunque se vaya la señal.</p>
+        <div class="botones">
+          <a class="boton" href="#/paradas">${svg('paradas')}Ver paradas</a>
+          <button class="boton boton--sec" id="btn-instalar" hidden>${svg('instalar')}Instalar app</button>
+        </div>
+        <p id="texto-instalacion"></p>
       </div>
-      <p class="pequeno" id="texto-instalacion"></p>
     </section>
+
     <div class="atajos">
-      <a class="atajo" href="#/paradas"><span>🚏</span><strong>Paradas</strong><span class="suave pequeno">Catálogo y horarios</span></a>
-      <a class="atajo" href="#/cerca"><span>📍</span><strong>Cerca de mí</strong><span class="suave pequeno">Parada más cercana</span></a>
-      <a class="atajo" href="#/avisos"><span>🔔</span><strong>Avisos</strong><span class="suave pequeno">Desvíos y retrasos</span></a>
-      <a class="atajo" href="#/ajustes"><span>⚙️</span><strong>Ajustes</strong><span class="suave pequeno">Tema y datos</span></a>
-    </div>`;
+      <a class="atajo" href="#/cerca" style="--c:var(--terracota)">${svg('cerca')}<strong>Cerca de mí</strong><span class="suave pequeno">Tu parada más próxima por GPS</span></a>
+      <a class="atajo" href="#/paradas" style="--c:var(--sierra)">${svg('paradas')}<strong>Paradas</strong><span class="suave pequeno">Rutas, horarios y tarifas</span></a>
+      <a class="atajo" href="#/avisos" style="--c:var(--ocre)">${svg('avisos')}<strong>Avisos</strong><span class="suave pequeno">Desvíos, obras y retrasos</span></a>
+      <a class="atajo" href="#/ajustes" style="--c:var(--cielo)">${svg('ajustes')}<strong>Ajustes</strong><span class="suave pequeno">Tema y datos guardados</span></a>
+    </div>
+
+    <section class="tarjeta banda">
+      <img ${img('sierra-autobus', [640, 1280], '(min-width: 640px) 380px, 100vw')} alt="" loading="lazy">
+      <div class="banda__texto">
+        <span class="kicker">Rutas de la sierra</span>
+        <h2>Antes de subir, revisa la última salida</h2>
+        <p class="suave">Muchas corridas a las comunidades terminan temprano. Consulta la tabla de salidas de cada parada y activa los avisos para enterarte de cierres o desvíos.</p>
+        <p class="pie-foto">Imagen ilustrativa generada con IA.</p>
+      </div>
+    </section>
+
+    <section class="tarjeta banda">
+      <img ${img('mision', [400, 700], '(min-width: 640px) 380px, 100vw')} alt="Fachada de una misión franciscana de la Sierra Gorda" loading="lazy">
+      <div class="banda__texto">
+        <span class="kicker">Hecha para Jalpan</span>
+        <h2>Tu guía de transporte local</h2>
+        <p class="suave">Comparte cómo está tu parada: si la ruta viene tardando, si está iluminada o si hay obras. Tus comentarios se guardan aunque no tengas señal y se envían solos al recuperarla.</p>
+      </div>
+    </section>`;
 
   seccionMisParadas(c);
 
@@ -35,7 +62,7 @@ export async function vistaInicio(c) {
   const pintar = (estado) => {
     // El botón siempre está visible salvo que ya esté instalada
     boton.hidden = estado === 'instalada';
-    texto.textContent = estado === 'instalada' ? '✅ Estás usando RutaExpress instalada.' : '';
+    texto.textContent = estado === 'instalada' ? 'Estás usando RutaExpress instalada.' : '';
   };
   pintar(estadoInstalacion());
   const quitar = alCambiarInstalacion(pintar);
@@ -62,11 +89,11 @@ async function seccionMisParadas(c) {
     const lista = ids.map((id) => paradas.find((p) => p.id === id)).filter(Boolean);
     if (!lista.length) return;
     const items = await Promise.all(
-      lista.map(async (p) => itemParada(p, await enlaceFicha(p.id), favoritos.includes(p.id) ? '★' : '🕘'))
+      lista.map(async (p) => itemParada(p, await enlaceFicha(p.id), favoritos.includes(p.id) ? 'Favorita' : 'Reciente'))
     );
     const sec = document.createElement('section');
     sec.className = 'tarjeta';
-    sec.innerHTML = `<h2>Mis paradas</h2><p class="suave pequeno">★ favoritas · 🕘 última consultada</p><ul class="lista">${items.join('')}</ul>`;
+    sec.innerHTML = `<h2>Mis paradas</h2><ul class="lista">${items.join('')}</ul>`;
     c.querySelector('.atajos')?.after(sec);
   } catch (e) {
     console.warn('No se pudieron cargar las paradas guardadas', e);
@@ -79,15 +106,16 @@ export async function vistaParadas(c) {
   const enlaces = Object.fromEntries(await Promise.all(paradas.map(async (p) => [p.id, await enlaceFicha(p.id)])));
 
   c.innerHTML = `
+    <span class="kicker">${paradas.length} puntos de salida</span>
     <h1>Paradas y bases</h1>
     <div class="buscador">
-      <label for="q" class="suave pequeno">Buscar por nombre, zona o número de ruta</label>
+      <label for="q" class="suave pequeno">Busca por nombre, zona o número de ruta</label>
       <input id="q" type="search" placeholder="Ej. Centro, 12, combi…" autocomplete="off">
     </div>
     <div class="filtros" role="group" aria-label="Filtrar por tipo">
       <button class="chip" data-tipo="todos" aria-pressed="true">Todas</button>
-      <button class="chip" data-tipo="autobus" aria-pressed="false">🚌 Autobús</button>
-      <button class="chip" data-tipo="combi" aria-pressed="false">🚐 Combis</button>
+      <button class="chip" data-tipo="autobus" aria-pressed="false">${svg('autobus')}Autobús</button>
+      <button class="chip" data-tipo="combi" aria-pressed="false">${svg('combi')}Combis</button>
     </div>
     <div id="mapa-paradas" role="region" aria-label="Mapa de paradas"></div>
     <ul class="lista" id="lista"></ul>`;
@@ -126,14 +154,14 @@ export async function vistaParadas(c) {
 }
 
 export function itemParada(p, href, extra = '') {
-  return `<li><a class="parada" href="${esc(href)}">
-    <span class="parada__icono" aria-hidden="true">${icono(p.tipo)}</span>
+  return `<li><a class="parada" data-tipo="${esc(p.tipo)}" href="${esc(href)}">
+    <span class="parada__icono">${icono(p.tipo)}</span>
     <span>
       <span class="parada__nombre">${esc(p.nombre)}</span>
-      <span class="suave pequeno"> · ${tipoTexto(p.tipo)} · ${esc(p.zona)}</span>
-      <span class="parada__rutas">${p.rutas.map((r) => `<span class="etiqueta">${esc(r.ruta)}</span>`).join('')}</span>
+      <span class="parada__meta">${tipoTexto(p.tipo)} · ${esc(p.zona)}</span>
+      <span class="parada__rutas">${p.rutas.map((r) => etiquetaRuta(r.ruta)).join('')}</span>
     </span>
-    <span class="suave">${extra || '›'}</span>
+    <span class="parada__extra">${extra ? esc(extra) : svg('flecha')}</span>
   </a></li>`;
 }
 

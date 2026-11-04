@@ -83,7 +83,7 @@ function botonCompartir(raiz, parada) {
   const boton = document.createElement('button');
   boton.className = 'boton boton--sec';
   boton.dataset.compartir = '';
-  boton.textContent = '📤 Compartir';
+  boton.textContent = 'Compartir';
   boton.addEventListener('click', async () => {
     const rutas = parada.rutas.map((r) => r.ruta).join(', ');
     const r = await compartir({

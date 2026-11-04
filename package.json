@@ -9,6 +9,7 @@
     "dev": "node --watch server.js",
     "iconos": "node scripts/generar-iconos.js",
     "vapid": "node scripts/generar-vapid.js",
+    "imagenes": "node scripts/optimizar-imagenes.js",
     "test": "node --test \"test/**/*.test.js\""
   },
   "keywords": [
@@ -25,5 +26,8 @@
     "express": "^4.22.3",
     "leaflet": "^1.9.4",
     "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
   }
 }

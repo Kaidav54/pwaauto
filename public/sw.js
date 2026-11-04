@@ -5,7 +5,7 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
 
-const VERSION = 'v7'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v8'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -42,6 +42,12 @@ const SHELL = [
   './js/mapa.js',
   './vendor/leaflet/leaflet.js',
   './vendor/leaflet/leaflet.css',
+  './img/iconos.svg',
+  './img/jalpan-centro-640.webp',
+  './img/jalpan-centro-1280.webp',
+  './fonts/bricolage-variable.woff2',
+  './fonts/atkinson-400.woff2',
+  './fonts/atkinson-700.woff2',
   './data/paradas.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -94,7 +100,7 @@ async function networkFirst(peticion, { nombreCache = CACHE_DATOS, respaldo } = 
 
 async function staleWhileRevalidate(peticion) {
   const cache = await caches.open(CACHE_IMAGENES);
-  const enCache = await cache.match(peticion);
+  const enCache = await caches.match(peticion); // incluye las fotos precacheadas
   const deRed = fetch(peticion)
     .then((r) => {
       if (r.ok) cache.put(peticion, r.clone());

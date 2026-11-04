@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "RutaExpress · Guía de paradas y rutas",
+  "name": "RutaExpress · Transporte en Jalpan de Serra",
   "short_name": "RutaExpress",
-  "description": "Paradas de autobús y combis, rutas, horarios, tarifas y avisos de desvío en tu ciudad.",
+  "description": "Paradas de autobús y combis de Jalpan de Serra: rutas, horarios, tarifas y avisos de desvío.",
   "lang": "es",
   "dir": "ltr",
   "start_url": "./?origen=pwa",
@@ -10,8 +10,8 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
-  "background_color": "#0f766e",
-  "theme_color": "#0f766e",
+  "background_color": "#f5eee3",
+  "theme_color": "#b8452a",
   "categories": ["travel", "navigation", "utilities"],
   "icons": [
     { "src": "icons/icon-72.png", "sizes": "72x72", "type": "image/png" },

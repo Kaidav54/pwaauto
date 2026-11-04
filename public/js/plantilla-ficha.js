@@ -52,7 +52,9 @@
     const estado = r.pendiente ? ' · pendiente de enviar' : '';
     return `<li class="resena${pendiente}" data-id="${esc(r.id)}">
       <div>${esc(r.texto)}</div>
-      <div class="resena__meta">${esc(r.autor || 'Anónimo')} · ${esc(fecha(r.fecha))}${estado}</div>
+      <div class="resena__meta">${esc(r.autor || 'Anónimo')} · ${esc(fecha(r.fecha))}${estado}${
+        r.pendiente ? '' : ` · <button type="button" class="resena__reportar" data-reportar="${esc(r.id)}">Reportar</button>`
+      }</div>
     </li>`;
   }
 

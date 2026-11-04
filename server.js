@@ -4,6 +4,10 @@ const path = require('path');
 const express = require('express');
 const { paginaFicha, paginaNoEncontrada } = require('./server/render');
 const { leer, escribir } = require('./server/almacen');
+const Remoto = require('./public/js/remoto.js');
+
+// Reseñas compartidas en Supabase (se desactiva con SUPABASE_DESACTIVADO=1, p. ej. en las pruebas)
+const usarSupabase = () => Remoto.activo() && process.env.SUPABASE_DESACTIVADO !== '1';
 
 const app = express();
 const PUERTO = process.env.PORT || 3000;
@@ -68,10 +72,18 @@ app.post('/api/resenas', (req, res) => {
 app.use('/api/push', require('./server/push').router);
 
 // ---------- SSR: ficha generada en el servidor ----------
-app.get('/parada/:id', (req, res) => {
+app.get('/parada/:id', async (req, res) => {
   const parada = buscarParada(req.params.id);
   if (!parada) return res.status(404).type('html').send(paginaNoEncontrada());
-  res.type('html').send(paginaFicha(parada, resenasDe(parada.id)));
+  let resenas = resenasDe(parada.id);
+  if (usarSupabase()) {
+    try {
+      resenas = await Remoto.listarResenas(parada.id, { señal: AbortSignal.timeout(2500) });
+    } catch (e) {
+      console.warn('[SSR] Supabase no respondió, se usan las reseñas locales:', e.message);
+    }
+  }
+  res.type('html').send(paginaFicha(parada, resenas));
 });
 
 if (require.main === module) {

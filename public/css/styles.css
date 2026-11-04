@@ -415,3 +415,11 @@ input:focus, textarea:focus, select:focus, .boton:focus-visible, .chip:focus-vis
   .tabla td.hora:nth-child(4) { grid-area: h2; }
   .tabla td.frecuencia { grid-area: fr; color: #d8cdbd; }
 }
+
+.resena__reportar {
+  border: 0; background: none; padding: 0; font: inherit; font-size: inherit;
+  color: var(--texto-suave); text-decoration: underline; cursor: pointer;
+}
+.resena__reportar:disabled { text-decoration: none; cursor: default; }
+.resena--nueva { animation: resaltar 2.4s ease-out; }
+@keyframes resaltar { from { background: color-mix(in srgb, var(--ocre) 35%, transparent); } }

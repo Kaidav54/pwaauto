@@ -28,6 +28,7 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "sharp": "^0.33.5"
   }
 }

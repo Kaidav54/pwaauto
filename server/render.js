@@ -18,6 +18,8 @@ function pagina({ titulo, descripcion, cuerpo, datos }) {
   <link rel="stylesheet" href="/css/styles.css">
   <script src="/js/plantilla-ficha.js"></script>
   <script src="/js/db.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/remoto.js"></script>
   <script type="module" src="/js/ficha-ssr.js"></script>
 </head>
 <body data-ssr="ficha">

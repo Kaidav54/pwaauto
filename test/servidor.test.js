@@ -7,6 +7,7 @@ const path = require('path');
 
 // Datos de prueba en una carpeta temporal para no tocar data/
 process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'rutaexpress-test-'));
+process.env.SUPABASE_DESACTIVADO = '1'; // las pruebas no tocan la base de datos real
 const app = require('../server');
 
 let srv, base;

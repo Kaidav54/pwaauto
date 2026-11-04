@@ -3,9 +3,9 @@
 //   · Cache First            → app shell (HTML, CSS, JS, íconos precacheados)
 //   · Network First          → datos (API y data/*.json) y páginas SSR de fichas
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
-importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
+importScripts('./js/db.js', './js/config.js', './js/remoto.js'); // RutaDB (IndexedDB) y RutaRemoto (Supabase)
 
-const VERSION = 'v8'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v9'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -33,6 +33,8 @@ const SHELL = [
   './js/ficha-acciones.js',
   './js/plantilla-ficha.js',
   './js/conexion.js',
+  './js/config.js',
+  './js/remoto.js',
   './js/resenas.js',
   './js/notificaciones.js',
   './js/vista-avisos.js',
@@ -188,19 +190,26 @@ async function enviarResenasPendientes() {
   const pendientes = await self.RutaDB.leerPendientes();
   const enviadas = [];
   for (const resena of pendientes) {
-    const respuesta = await fetch(URL_RESENAS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(resena),
-    }); // si no hay red, fetch lanza error → el navegador reintentará el sync más tarde
-    if (respuesta.ok) {
-      await self.RutaDB.guardarResena(await respuesta.json());
+    // Si no hay red, fetch lanza error → el navegador reintentará el sync más tarde
+    let resultado;
+    if (self.RutaRemoto.activo()) {
+      resultado = await self.RutaRemoto.publicarResena(resena); // Supabase
+    } else {
+      const r = await fetch(URL_RESENAS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resena),
+      }); // servidor Node
+      resultado = { ok: r.ok, reintentar: !r.ok && r.status !== 400, estado: r.status };
+    }
+    if (resultado.ok) {
+      await self.RutaDB.guardarResena(resena);
       await self.RutaDB.borrarPendiente(resena.id);
       enviadas.push(resena.id);
-    } else if (respuesta.status === 400) {
+    } else if (!resultado.reintentar) {
       await self.RutaDB.borrarPendiente(resena.id); // inválida: no se reintenta
     } else {
-      throw new Error(`El servidor respondió ${respuesta.status}`);
+      throw new Error(`El servicio de reseñas respondió ${resultado.estado}`);
     }
   }
   if (enviadas.length) {

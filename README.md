@@ -44,6 +44,17 @@ npm test           # pruebas automáticas
   Chrome › `chrome://inspect` › *Port forwarding* (3000 → localhost:3000) o un túnel HTTPS.
 - Las coordenadas de `public/data/paradas.json` son de ejemplo: cámbialas por las paradas de tu ciudad.
 
+## Reseñas compartidas (Supabase)
+
+Las reseñas se guardan en **Supabase** (PostgreSQL), así funcionan también en GitHub Pages y llegan **en tiempo real**
+a los demás usuarios. La configuración pública está en `public/js/config.js`.
+
+1. En Supabase › **SQL Editor** ejecuta una vez [`docs/supabase.sql`](docs/supabase.sql) (tabla, reglas RLS, antispam, reportes y Realtime).
+2. Flujo: el comentario se guarda primero en IndexedDB → Background Sync lo envía a Supabase → Realtime lo muestra en los demás celulares.
+3. Seguridad: cualquiera puede leer y publicar; nadie puede editar ni borrar desde la app. Con 3 reportes un comentario se oculta solo.
+   La moderación manual está al final de `docs/supabase.sql`.
+4. Si `config.js` no tiene Supabase, la app usa la API del servidor Node (`/api/resenas`).
+
 ## Estructura
 
 ```
@@ -91,7 +102,7 @@ GitHub Pages solo sirve archivos estáticos. La app detecta si hay servidor (`/a
 | IndexedDB, localStorage, favoritas | ✅ | ✅ |
 | Cerca de mí (GPS), vibrar, compartir | ✅ | ✅ |
 | Notificación local | ✅ | ✅ |
-| Reseñas | ⚠️ se guardan en el dispositivo (cola) | ✅ se publican y sincronizan con Background Sync |
+| Reseñas | ✅ Supabase + Background Sync + tiempo real | ✅ Supabase (SSR incluido) |
 | Notificaciones push | ❌ (necesita enviar desde un servidor) | ✅ |
 
 Para tener todo en línea, despliega el servidor en un servicio con Node (Render, Railway, Fly.io…)

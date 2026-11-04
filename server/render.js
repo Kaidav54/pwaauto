@@ -16,6 +16,9 @@ function pagina({ titulo, descripcion, cuerpo, datos }) {
   <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/plantilla-ficha.js"></script>
+  <script src="/js/db.js"></script>
+  <script type="module" src="/js/ficha-ssr.js"></script>
 </head>
 <body data-ssr="ficha">
   <header class="barra">

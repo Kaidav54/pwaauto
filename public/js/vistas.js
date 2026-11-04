@@ -190,7 +190,3 @@ export async function vistaAjustes(c) {
   });
 }
 
-// ---------- Marcadores de vistas de fases posteriores ----------
-export const vistaPendiente = (titulo) => async (c) => {
-  c.innerHTML = `<section class="tarjeta estado-vacio"><h1>${esc(titulo)}</h1><p>Disponible próximamente.</p></section>`;
-};

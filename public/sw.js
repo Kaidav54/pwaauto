@@ -5,7 +5,7 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
 
-const VERSION = 'v5'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v6'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -34,6 +34,9 @@ const SHELL = [
   './js/resenas.js',
   './js/notificaciones.js',
   './js/vista-avisos.js',
+  './js/vista-cerca.js',
+  './js/dispositivo.js',
+  './js/ficha-ssr.js',
   './data/paradas.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

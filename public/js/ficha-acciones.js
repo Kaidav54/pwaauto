@@ -5,6 +5,7 @@ import { $, toast } from './util.js';
 import { guardarPref, leerPref } from './prefs.js';
 import { cargarResenas, publicarResena } from './resenas.js';
 import { hayServidor } from './api.js';
+import { compartir, vibrar } from './dispositivo.js';
 
 const DB = window.RutaDB;
 const { listaResenasHTML } = window.PlantillaFicha;
@@ -55,6 +56,7 @@ async function seccionResenas(raiz, parada) {
     try {
       const { modo } = await publicarResena({ paradaId: parada.id, autor, texto });
       form.texto.value = '';
+      vibrar(30);
       await refrescar();
       toast(
         modo === 'enviada' ? '✅ Comentario publicado' :
@@ -74,7 +76,28 @@ async function seccionResenas(raiz, parada) {
   window.addEventListener('hashchange', () => window.removeEventListener('resenas-sincronizadas', alSincronizar), { once: true });
 }
 
+function botonCompartir(raiz, parada) {
+  const acciones = $('[data-acciones]', raiz);
+  if (!acciones || $('[data-compartir]', acciones)) return;
+  const boton = document.createElement('button');
+  boton.className = 'boton boton--sec';
+  boton.dataset.compartir = '';
+  boton.textContent = '📤 Compartir';
+  boton.addEventListener('click', async () => {
+    const rutas = parada.rutas.map((r) => r.ruta).join(', ');
+    const r = await compartir({
+      titulo: parada.nombre,
+      texto: `${parada.nombre} (${parada.direccion}) · rutas ${rutas} — vía RutaExpress`,
+      url: location.href,
+    });
+    if (r === 'copiado') toast('Enlace copiado al portapapeles');
+    if (r !== 'cancelado') vibrar(40);
+  });
+  acciones.append(boton);
+}
+
 export async function activarAccionesFicha(raiz, parada) {
   guardarPref('ultimaParada', parada.id);
+  botonCompartir(raiz, parada);
   await Promise.all([botonFavorito(raiz, parada), seccionResenas(raiz, parada)]);
 }

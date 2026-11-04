@@ -4,6 +4,7 @@ import { obtenerParadas, obtenerParada, enlaceFicha } from './api.js';
 import { estadoInstalacion, alCambiarInstalacion, instalar } from './instalacion.js';
 import { leerPref, guardarPref, borrarPrefs } from './prefs.js';
 import { activarAccionesFicha } from './ficha-acciones.js';
+import { versionServiceWorker } from './registro-sw.js';
 
 const { icono, tipoTexto, fichaHTML } = window.PlantillaFicha;
 
@@ -161,6 +162,7 @@ export async function vistaAjustes(c) {
         <li>Última actualización: <strong>${actualizadas ? new Date(actualizadas).toLocaleString('es-MX') : '—'}</strong></li>
         <li>Favoritas: <strong>${favoritos.length}</strong></li>
         <li>Comentarios pendientes de enviar: <strong id="num-pendientes">${pendientes.length}</strong></li>
+        <li>Versión del service worker: <strong>${esc((await versionServiceWorker()) || '—')}</strong></li>
       </ul>
       <div class="botones">
         <button class="boton boton--sec" id="btn-actualizar">🔄 Actualizar catálogo</button>

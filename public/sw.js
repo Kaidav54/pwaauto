@@ -5,7 +5,7 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js'); // self.RutaDB (IndexedDB compartida con la página)
 
-const VERSION = 'v3';
+const VERSION = 'v4'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -181,4 +181,17 @@ self.addEventListener('sync', (evento) => {
   if (evento.tag === 'sync-resenas') {
     evento.waitUntil(enviarResenasPendientes());
   }
+});
+
+// ---------- Ciclo de vida: actualización controlada por el usuario ----------
+// La versión nueva queda en "waiting" hasta que el usuario pulsa «Actualizar»;
+// entonces la página envía SKIP_WAITING y el SW nuevo se activa.
+self.addEventListener('message', (evento) => {
+  if (evento.data?.tipo === 'SKIP_WAITING') self.skipWaiting();
+  if (evento.data?.tipo === 'VERSION') evento.source?.postMessage({ tipo: 'VERSION', version: VERSION });
+});
+
+// Al activarse, toma el control de las pestañas abiertas sin esperar a recargarlas
+self.addEventListener('activate', (evento) => {
+  evento.waitUntil(self.clients.claim());
 });

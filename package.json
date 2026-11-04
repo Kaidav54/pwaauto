@@ -9,7 +9,7 @@
     "dev": "node --watch server.js",
     "iconos": "node scripts/generar-iconos.js",
     "vapid": "node scripts/generar-vapid.js",
-    "test": "node --test test/"
+    "test": "node --test \"test/**/*.test.js\""
   },
   "keywords": ["pwa", "service-worker", "transporte"],
   "author": "davkaito0929",

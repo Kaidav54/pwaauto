@@ -1,5 +1,7 @@
 // Acceso a los datos remotos del catálogo.
 // Con servidor Node: /api/paradas.  En GitHub Pages (estático): data/paradas.json.
+// Cada respuesta correcta se respalda en IndexedDB; si la red falla se usa el respaldo.
+const DB = window.RutaDB;
 
 let servidorDisponible; // undefined = aún no se sabe
 
@@ -10,8 +12,10 @@ export async function hayServidor() {
     const r = await fetch('api/salud', { cache: 'no-store' });
     servidorDisponible = r.ok && (r.headers.get('content-type') || '').includes('json');
   } catch {
-    servidorDisponible = false;
+    // Sin red no podemos saberlo: recordamos lo último que vimos
+    return localStorage.getItem('rutaexpress:servidor') === 'si';
   }
+  try { localStorage.setItem('rutaexpress:servidor', servidorDisponible ? 'si' : 'no'); } catch {}
   return servidorDisponible;
 }
 
@@ -33,8 +37,20 @@ export async function obtenerParadasRemotas() {
   return pedirJSON('data/paradas.json');
 }
 
+/** Red primero; si falla, respaldo local de IndexedDB. */
 export async function obtenerParadas() {
-  return obtenerParadasRemotas();
+  try {
+    const paradas = await obtenerParadasRemotas();
+    DB.guardarParadas(paradas).catch((e) => console.warn('[DB] No se pudo respaldar', e));
+    return paradas;
+  } catch (error) {
+    const respaldo = await DB.leerParadas().catch(() => []);
+    if (respaldo.length) {
+      console.info('[API] Sin red: usando respaldo local de IndexedDB');
+      return respaldo;
+    }
+    throw error;
+  }
 }
 
 export async function obtenerParada(id) {

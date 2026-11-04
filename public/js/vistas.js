@@ -2,6 +2,8 @@
 import { esc, $, $$, toast } from './util.js';
 import { obtenerParadas, obtenerParada, enlaceFicha } from './api.js';
 import { estadoInstalacion, alCambiarInstalacion, instalar } from './instalacion.js';
+import { leerPref, guardarPref, borrarPrefs } from './prefs.js';
+import { activarAccionesFicha } from './ficha-acciones.js';
 
 const { icono, tipoTexto, fichaHTML } = window.PlantillaFicha;
 
@@ -24,6 +26,8 @@ export async function vistaInicio(c) {
       <a class="atajo" href="#/ajustes"><span>⚙️</span><strong>Ajustes</strong><span class="suave pequeno">Tema y datos</span></a>
     </div>`;
 
+  seccionMisParadas(c);
+
   const boton = $('#btn-instalar', c);
   const texto = $('#texto-instalacion', c);
   const pintar = (estado) => {
@@ -38,6 +42,26 @@ export async function vistaInicio(c) {
   boton.addEventListener('click', async () => {
     if (await instalar()) toast('¡Gracias por instalar RutaExpress!');
   });
+}
+
+// Favoritas (IndexedDB) y última parada consultada (localStorage)
+async function seccionMisParadas(c) {
+  try {
+    const [paradas, favoritos] = await Promise.all([obtenerParadas(), window.RutaDB.leerFavoritos()]);
+    const ultima = leerPref('ultimaParada');
+    const ids = [...new Set([...(ultima ? [ultima] : []), ...favoritos])];
+    const lista = ids.map((id) => paradas.find((p) => p.id === id)).filter(Boolean);
+    if (!lista.length) return;
+    const items = await Promise.all(
+      lista.map(async (p) => itemParada(p, await enlaceFicha(p.id), favoritos.includes(p.id) ? '★' : '🕘'))
+    );
+    const sec = document.createElement('section');
+    sec.className = 'tarjeta';
+    sec.innerHTML = `<h2>Mis paradas</h2><p class="suave pequeno">★ favoritas · 🕘 última consultada</p><ul class="lista">${items.join('')}</ul>`;
+    c.querySelector('.atajos')?.after(sec);
+  } catch (e) {
+    console.warn('No se pudieron cargar las paradas guardadas', e);
+  }
 }
 
 // ---------- Catálogo (CSR) ----------
@@ -102,6 +126,66 @@ export async function vistaFicha(c, { id }) {
   }
   document.title = `${p.nombre} · RutaExpress`;
   c.innerHTML = fichaHTML(p);
+  await activarAccionesFicha(c, p);
+}
+
+// ---------- Ajustes: preferencias (localStorage) y datos locales (IndexedDB) ----------
+export async function vistaAjustes(c) {
+  const DB = window.RutaDB;
+  const [actualizadas, paradas, pendientes, favoritos] = await Promise.all([
+    DB.leerMeta('paradasActualizadas').catch(() => null),
+    DB.leerParadas().catch(() => []),
+    DB.leerPendientes().catch(() => []),
+    DB.leerFavoritos().catch(() => []),
+  ]);
+  const tema = leerPref('tema');
+
+  c.innerHTML = `
+    <h1>Ajustes</h1>
+    <section class="tarjeta">
+      <h2>Preferencias</h2>
+      <label for="tema">Tema</label>
+      <select id="tema">
+        <option value="sistema" ${tema === 'sistema' ? 'selected' : ''}>Como el sistema</option>
+        <option value="claro" ${tema === 'claro' ? 'selected' : ''}>Claro</option>
+        <option value="oscuro" ${tema === 'oscuro' ? 'selected' : ''}>Oscuro</option>
+      </select>
+      <label for="autor">Tu nombre para los comentarios</label>
+      <input id="autor" maxlength="40" placeholder="Anónimo" value="${esc(leerPref('autor'))}">
+      <p class="suave pequeno">Se guarda en <code>localStorage</code> de este dispositivo.</p>
+    </section>
+    <section class="tarjeta">
+      <h2>Datos sin conexión (IndexedDB)</h2>
+      <ul>
+        <li>Paradas respaldadas: <strong>${paradas.length}</strong></li>
+        <li>Última actualización: <strong>${actualizadas ? new Date(actualizadas).toLocaleString('es-MX') : '—'}</strong></li>
+        <li>Favoritas: <strong>${favoritos.length}</strong></li>
+        <li>Comentarios pendientes de enviar: <strong id="num-pendientes">${pendientes.length}</strong></li>
+      </ul>
+      <div class="botones">
+        <button class="boton boton--sec" id="btn-actualizar">🔄 Actualizar catálogo</button>
+        <button class="boton boton--sec" id="btn-borrar">🗑️ Borrar datos locales</button>
+      </div>
+    </section>`;
+
+  $('#tema', c).addEventListener('change', (e) => guardarPref('tema', e.target.value));
+  $('#autor', c).addEventListener('change', (e) => guardarPref('autor', e.target.value.trim()));
+  $('#btn-actualizar', c).addEventListener('click', async () => {
+    try {
+      await obtenerParadas();
+      toast('Catálogo actualizado');
+      vistaAjustes(c);
+    } catch {
+      toast('Sin conexión: no se pudo actualizar');
+    }
+  });
+  $('#btn-borrar', c).addEventListener('click', async () => {
+    if (!confirm('¿Borrar favoritas, respaldo y preferencias de este dispositivo?')) return;
+    await DB.borrarTodo();
+    borrarPrefs();
+    toast('Datos locales borrados');
+    vistaAjustes(c);
+  });
 }
 
 // ---------- Marcadores de vistas de fases posteriores ----------

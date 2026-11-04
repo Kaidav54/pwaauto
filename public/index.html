@@ -1,5 +1,36 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><title>RutaExpress</title></head>
-<body><h1>RutaExpress</h1><p>Servidor funcionando.</p></body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>RutaExpress</title>
+  <meta name="description" content="Guía de paradas de transporte, rutas, horarios y tarifas de tu ciudad.">
+  <meta name="theme-color" content="#0f766e">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- ===== APP SHELL: cabecera, navegación, contenido y pie ===== -->
+  <header class="barra">
+    <a class="marca" href="#/">
+      <span class="marca__logo" aria-hidden="true">🚌</span>
+      <span class="marca__nombre">RutaExpress</span>
+    </a>
+  </header>
+
+  <main id="contenido" class="contenido" tabindex="-1">
+    <!-- Las vistas se dibujan aquí desde JavaScript (CSR) -->
+    <section class="tarjeta">
+      <h1>Bienvenido a RutaExpress</h1>
+      <p>Cargando…</p>
+    </section>
+  </main>
+
+  <nav class="menu" aria-label="Navegación principal">
+    <a href="#/" data-ruta="inicio"><span aria-hidden="true">🏠</span>Inicio</a>
+    <a href="#/paradas" data-ruta="paradas"><span aria-hidden="true">🚏</span>Paradas</a>
+    <a href="#/cerca" data-ruta="cerca"><span aria-hidden="true">📍</span>Cerca</a>
+    <a href="#/avisos" data-ruta="avisos"><span aria-hidden="true">🔔</span>Avisos</a>
+    <a href="#/ajustes" data-ruta="ajustes"><span aria-hidden="true">⚙️</span>Ajustes</a>
+  </nav>
+</body>
 </html>

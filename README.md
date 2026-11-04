@@ -6,8 +6,8 @@ comentarios de usuarios en tiempo real, avisos push de desvíos y la parada más
 Es una **Aplicación Web Progresiva (PWA)**: se instala, funciona sin conexión, sincroniza los
 comentarios al recuperar la red y recibe notificaciones push.
 
-- **Repositorio:** `https://github.com/<usuario>/rutaexpress`
-- **App publicada:** `https://<usuario>.github.io/rutaexpress/`
+- **Repositorio:** https://github.com/Kaidav54/pwaauto
+- **App publicada:** https://kaidav54.github.io/pwaauto/
 
 ## Funcionalidades por fase
 
@@ -68,7 +68,7 @@ docs/PRUEBAS.md        Reporte de pruebas
 ### 13.1 Subir el repositorio
 
 ```bash
-git remote add origin https://github.com/<usuario>/rutaexpress.git
+git remote add origin https://github.com/Kaidav54/pwaauto.git
 git push -u origin main
 ```
 

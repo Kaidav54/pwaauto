@@ -6,7 +6,7 @@
 | Versión del SW | `v6` (ver `public/sw.js`) |
 | Fecha | ____ / ____ / ______ |
 | Responsable | ______________________ |
-| URL probada | `http://localhost:3000` · `https://<usuario>.github.io/<repo>/` |
+| URL probada | `http://localhost:3000` · `https://kaidav54.github.io/pwaauto/` |
 
 ## 12.1 Herramientas
 

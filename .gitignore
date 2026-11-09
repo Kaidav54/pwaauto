@@ -11,3 +11,7 @@ data/suscripciones.json
 
 # Fotos originales (pesadas); se publican solo las optimizadas de public/img
 assets/
+
+# Archivos temporales de LibreOffice / Word
+.~lock.*#
+~$*

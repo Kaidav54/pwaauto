@@ -5,7 +5,7 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js', './js/config.js', './js/remoto.js'); // RutaDB (IndexedDB) y RutaRemoto (Supabase)
 
-const VERSION = 'v12'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v13'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;

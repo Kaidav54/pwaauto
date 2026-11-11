@@ -10,6 +10,8 @@ let servidorDisponible; // undefined = aún no se sabe
 /** ¿Hay un servidor Node detrás (API, SSR, push)? En GitHub Pages será false. */
 export async function hayServidor() {
   if (servidorDisponible !== undefined) return servidorDisponible;
+  // GitHub Pages solo sirve archivos estáticos: no hace falta preguntar (evita un 404 en la consola)
+  if (location.hostname.endsWith('github.io')) return (servidorDisponible = false);
   try {
     const r = await fetch(url('api/salud'), { cache: 'no-store' });
     servidorDisponible = r.ok && (r.headers.get('content-type') || '').includes('json');

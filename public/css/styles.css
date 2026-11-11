@@ -107,7 +107,7 @@ h3 { font-size: 1.05rem; font-weight: 700; }
 .titulo-seccion { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 4px 0 14px; }
 .kicker {
   display: inline-block; font-family: var(--fuente-titulos); font-weight: 700; font-size: .78rem;
-  letter-spacing: .12em; text-transform: uppercase; color: var(--terracota);
+  letter-spacing: .12em; text-transform: uppercase; color: var(--enlace);
 }
 
 /* ---- Cabecera ---- */

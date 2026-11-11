@@ -291,7 +291,7 @@ input:focus, textarea:focus, select:focus, .boton:focus-visible, .chip:focus-vis
 .portada picture, .portada img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .portada::after {
   content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgb(22 14 9 / 0) 25%, rgb(22 14 9 / .55) 55%, rgb(22 14 9 / .92) 100%);
+  background: linear-gradient(180deg, rgb(22 14 9 / .25) 0%, rgb(22 14 9 / .6) 38%, rgb(22 14 9 / .92) 100%);
 }
 .portada__texto { position: relative; z-index: 1; padding: 24px 20px 22px; max-width: 640px; }
 .portada .kicker { color: var(--ambar); }

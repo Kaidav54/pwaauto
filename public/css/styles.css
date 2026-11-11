@@ -449,3 +449,6 @@ input:focus, textarea:focus, select:focus, .boton:focus-visible, .chip:focus-vis
 .mapa__info .suave { font-size: .78rem; }
 .mapa__info button, .mapa__info a { font: inherit; font-size: .85rem; font-weight: 700; }
 .mapa__info button { border: 0; background: none; color: var(--enlace); text-decoration: underline; cursor: pointer; padding: 0; }
+
+.credito a { color: #fff; }
+.pie-foto a { color: inherit; }

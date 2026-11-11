@@ -16,11 +16,12 @@ const img = (nombre, anchos, tam) =>
 export async function vistaInicio(c) {
   c.innerHTML = `
     <section class="portada">
-      <img ${img('jalpan-centro', [640, 1280, 1920], '100vw')} alt="Vista del centro de Jalpan de Serra con la sierra al fondo" fetchpriority="high">
+      <img ${img('jalpan-carretera', [640, 1280, 1920], '100vw')} alt="Carretera federal 120 a su paso por Jalpan de Serra, con la sierra al fondo" fetchpriority="high">
+      <span class="credito">Foto: <a href="https://commons.wikimedia.org/wiki/File:Hwy120Jalpan.JPG" target="_blank" rel="noopener">AlejandroLinaresGarcia</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-SA 4.0</a></span>
       <div class="portada__texto">
         <span class="kicker">Jalpan de Serra · Sierra Gorda</span>
         <h1>Muévete por la sierra</h1>
-        <p>Paradas, combis y corridas con horarios y tarifas. Funciona aunque se vaya la señal.</p>
+        <p>Corridas a Xilitla, Río Verde, Querétaro y más, con horarios y tarifas. Funciona aunque se vaya la señal.</p>
         <div class="botones">
           <a class="boton" href="#/paradas">${svg('paradas')}Ver paradas</a>
           <button class="boton boton--sec" id="btn-instalar" hidden>${svg('instalar')}Instalar app</button>
@@ -41,17 +42,18 @@ export async function vistaInicio(c) {
       <div class="banda__texto">
         <span class="kicker">Rutas de la sierra</span>
         <h2>Antes de subir, revisa la última salida</h2>
-        <p class="suave">Muchas corridas a las comunidades terminan temprano. Consulta la tabla de salidas de cada parada y activa los avisos para enterarte de cierres o desvíos.</p>
+        <p class="suave">Algunas corridas salen por última vez a media tarde. Consulta la tabla de salidas, toca una corrida para ver su recorrido y activa los avisos para enterarte de retrasos o desvíos.</p>
         <p class="pie-foto">Imagen ilustrativa generada con IA.</p>
       </div>
     </section>
 
     <section class="tarjeta banda">
-      <img ${img('mision', [400, 700], '(min-width: 640px) 380px, 100vw')} alt="Fachada de una misión franciscana de la Sierra Gorda" loading="lazy">
+      <img ${img('mision', [400, 800], '(min-width: 640px) 380px, 100vw')} alt="Misión de Santiago de Jalpan" loading="lazy">
       <div class="banda__texto">
         <span class="kicker">Hecha para Jalpan</span>
         <h2>Tu guía de transporte local</h2>
         <p class="suave">Comparte cómo está tu parada: si la ruta viene tardando, si está iluminada o si hay obras. Tus comentarios se guardan aunque no tengas señal y se envían solos al recuperarla.</p>
+        <p class="pie-foto">Misión de Santiago de Jalpan. Foto: <a href="https://commons.wikimedia.org/wiki/File:Misi%C3%B3n_de_Santiago_de_Jalpan,_Jalpan_de_Serra.jpg" target="_blank" rel="noopener">Diana.resendiz</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" target="_blank" rel="noopener">CC BY-SA 4.0</a> (recortada).</p>
       </div>
     </section>`;
 
@@ -215,6 +217,17 @@ export async function vistaAjustes(c) {
         <button class="boton boton--sec" id="btn-actualizar">🔄 Actualizar catálogo</button>
         <button class="boton boton--sec" id="btn-borrar">🗑️ Borrar datos locales</button>
       </div>
+    </section>
+    <section class="tarjeta">
+      <h2>Créditos</h2>
+      <ul class="pequeno">
+        <li>Foto de portada: «Hwy120Jalpan», <a href="https://commons.wikimedia.org/wiki/File:Hwy120Jalpan.JPG" target="_blank" rel="noopener">AlejandroLinaresGarcia</a>, CC BY-SA 4.0, vía Wikimedia Commons (recortada y comprimida).</li>
+        <li>Misión de Santiago de Jalpan: <a href="https://commons.wikimedia.org/wiki/File:Misi%C3%B3n_de_Santiago_de_Jalpan,_Jalpan_de_Serra.jpg" target="_blank" rel="noopener">Diana.resendiz</a>, CC BY-SA 4.0, vía Wikimedia Commons (recortada y comprimida).</li>
+        <li>Autobús en la sierra: imagen ilustrativa generada con IA.</li>
+        <li>Mapas, ubicaciones y trazos: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">colaboradores de OpenStreetMap</a> (ODbL), con Leaflet y OSRM.</li>
+        <li>Horarios y precios: Reservamos y horariodeautobuses.com.mx (fuentes en cada ficha).</li>
+        <li>Tipografías: Bricolage Grotesque y Atkinson Hyperlegible (SIL Open Font License).</li>
+      </ul>
     </section>`;
 
   $('#tema', c).addEventListener('change', (e) => guardarPref('tema', e.target.value));

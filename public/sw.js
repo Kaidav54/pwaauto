@@ -5,7 +5,7 @@
 //   · Stale-While-Revalidate → imágenes e íconos no precacheados
 importScripts('./js/db.js', './js/config.js', './js/remoto.js'); // RutaDB (IndexedDB) y RutaRemoto (Supabase)
 
-const VERSION = 'v11'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
+const VERSION = 'v12'; // ⚠️ súbela en cada publicación para que los usuarios reciban los cambios
 const CACHE_SHELL = `rutaexpress-shell-${VERSION}`;
 const CACHE_DATOS = `rutaexpress-datos-${VERSION}`;
 const CACHE_IMAGENES = `rutaexpress-img-${VERSION}`;
@@ -45,8 +45,8 @@ const SHELL = [
   './vendor/leaflet/leaflet.js',
   './vendor/leaflet/leaflet.css',
   './img/iconos.svg',
-  './img/jalpan-centro-640.webp',
-  './img/jalpan-centro-1280.webp',
+  './img/jalpan-carretera-640.webp',
+  './img/jalpan-carretera-1280.webp',
   './fonts/bricolage-variable.woff2',
   './fonts/atkinson-400.woff2',
   './fonts/atkinson-700.woff2',

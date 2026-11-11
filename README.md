@@ -35,6 +35,7 @@ node -v            # 18 o superior
 npm install
 npm start          # http://localhost:3000
 npm test           # pruebas automáticas
+npm run trazos     # recalcula los trazos por carretera de las corridas (OSRM + OpenStreetMap)
 ```
 
 - Las claves **VAPID** se generan solas la primera vez en `.vapid.json` (no se sube a git).

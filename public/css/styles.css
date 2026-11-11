@@ -432,3 +432,20 @@ input:focus, textarea:focus, select:focus, .boton:focus-visible, .chip:focus-vis
 }
 .fuentes ul { margin: 6px 0; padding-left: 18px; }
 .fuentes p { margin: 4px 0 0; }
+
+/* Corridas seleccionables y recuadro de información del mapa de la ficha */
+.tablero__pista { margin: -4px 16px 8px; font-size: .8rem; color: #a59886; }
+.tabla tbody tr[data-destino] { cursor: pointer; transition: background .15s; }
+.tabla tbody tr[data-destino]:hover { background: rgb(255 255 255 / .07); }
+.tabla tbody tr[data-destino]:focus-visible { outline: 3px solid var(--ambar); outline-offset: -3px; }
+.tabla tbody tr[aria-pressed="true"] { background: rgb(242 178 58 / .16); box-shadow: inset 4px 0 0 var(--ambar); }
+.mapa__info {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px;
+  margin-top: 8px; padding: 10px 12px; border-radius: var(--radio);
+  background: var(--superficie-2); font-size: .9rem;
+}
+.mapa__info[hidden] { display: none; }
+.mapa__info strong { font-family: var(--fuente-titulos); }
+.mapa__info .suave { font-size: .78rem; }
+.mapa__info button, .mapa__info a { font: inherit; font-size: .85rem; font-weight: 700; }
+.mapa__info button { border: 0; background: none; color: var(--enlace); text-decoration: underline; cursor: pointer; padding: 0; }

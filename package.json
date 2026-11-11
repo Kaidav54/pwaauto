@@ -10,7 +10,8 @@
     "iconos": "node scripts/generar-iconos.js",
     "vapid": "node scripts/generar-vapid.js",
     "imagenes": "node scripts/optimizar-imagenes.js",
-    "test": "node --test \"test/**/*.test.js\""
+    "test": "node --test \"test/**/*.test.js\"",
+    "trazos": "node scripts/generar-trazos.js"
   },
   "keywords": [
     "pwa",

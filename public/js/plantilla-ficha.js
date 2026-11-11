@@ -79,7 +79,7 @@
   function fichaHTML(p, { resenas = [], enlaceVolver = '#/paradas' } = {}) {
     const filas = p.rutas
       .map(
-        (r) => `<tr>
+        (r, i) => `<tr data-corrida="${i}"${r.destino ? ` data-destino="${esc(r.destino)}"` : ''}>
           <td class="c-ruta">${etiquetaRuta(r.ruta)}</td>
           <td class="recorrido">${esc(r.nombre)}${r.empresa || r.duracion ? `<span class="recorrido__extra">${esc([r.empresa, r.duracion].filter(Boolean).join(' · '))}</span>` : ''}</td>
           <td class="hora" data-label="Primera">${esc(r.primera)}</td>
@@ -104,14 +104,16 @@
     <p>${esc(p.descripcion)}</p>
     <div class="ficha__datos">${caracteristicas(p)}</div>
     <div class="mapa mapa--ficha" data-mapa-ficha role="region" aria-label="Mapa de ubicación de ${esc(p.nombre)}"></div>
+    <div class="mapa__info" data-mapa-info role="status" aria-live="polite" hidden></div>
     <div class="botones" data-acciones>
-      <a class="boton boton--sec" target="_blank" rel="noopener"
+      <a class="boton boton--sec" data-como-llegar target="_blank" rel="noopener"
          href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}">${svg('cerca')}Cómo llegar</a>
     </div>
   </section>
 
   <section class="tablero" aria-labelledby="titulo-horarios">
     <div class="tablero__titulo"><span id="titulo-horarios">Salidas desde aquí</span><span>${p.rutas.length} ${p.rutas.length === 1 ? 'corrida' : 'corridas'}</span></div>
+    <p class="tablero__pista" data-pista-trazo hidden>Toca una corrida para ver su recorrido en el mapa.</p>
     <div class="tabla-envoltura">
       <table class="tabla">
         <thead><tr><th>Ruta</th><th>Destino</th><th>Primera</th><th>Última</th><th>Salidas</th><th>Tarifa</th></tr></thead>

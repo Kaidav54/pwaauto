@@ -120,6 +120,62 @@ export async function mapaCerca(contenedor, pos, masCercana, otras, enlaces) {
 /** Mapa pequeño de la ficha de una parada. */
 export async function mapaFicha(contenedor, parada) {
   const { L, mapa } = await crearMapa(contenedor, { center: [parada.lat, parada.lng], zoom: 17 });
-  L.marker([parada.lat, parada.lng], { icon: iconoParada(L, parada, { destacada: true }), title: parada.nombre }).addTo(mapa);
-  return mapa;
+  const origen = [parada.lat, parada.lng];
+  L.marker(origen, { icon: iconoParada(L, parada, { destacada: true }), title: parada.nombre, zIndexOffset: 1000 }).addTo(mapa);
+  const capa = L.layerGroup().addTo(mapa); // aquí se dibuja la corrida o la caminata seleccionada
+
+  // Línea con "borde" blanco para que se distinga sobre el mapa
+  const linea = (puntos, color, extra = {}) => {
+    L.polyline(puntos, { color: '#fff', weight: 9, opacity: 0.9, lineJoin: 'round' }).addTo(capa);
+    return L.polyline(puntos, { color, weight: 5, lineJoin: 'round', ...extra }).addTo(capa);
+  };
+
+  return {
+    mapa,
+
+    /** Dibuja el trazo por carretera de una corrida hasta su destino. */
+    mostrarCorrida(trazo, destino, color) {
+      capa.clearLayers();
+      const l = linea(trazo.puntos, color);
+      L.circleMarker([destino.lat, destino.lng], { radius: 8, color: '#fff', weight: 3, fillColor: color, fillOpacity: 1 })
+        .bindTooltip(destino.nombre, { permanent: true, direction: 'top', offset: [0, -8] })
+        .addTo(capa);
+      mapa.fitBounds(l.getBounds().pad(0.12));
+    },
+
+    /** Dibuja el camino a pie desde la posición del usuario hasta la parada. */
+    mostrarCaminata(puntos, pos) {
+      capa.clearLayers();
+      const yo = [pos.lat, pos.lng];
+      L.circle(yo, { radius: pos.precision || 0, color: '#3d6f9e', weight: 1, fillOpacity: 0.12 }).addTo(capa);
+      const l = linea(puntos, '#3d6f9e', { dashArray: puntos.length > 2 ? null : '2 9', lineCap: 'round' });
+      L.circleMarker(yo, { radius: 8, color: '#fff', weight: 3, fillColor: '#3d6f9e', fillOpacity: 1 })
+        .bindTooltip('Estás aquí', { permanent: true, direction: 'top', offset: [0, -8] })
+        .addTo(capa);
+      mapa.fitBounds(l.getBounds().pad(0.25), { maxZoom: 17 });
+    },
+
+    limpiar() {
+      capa.clearLayers();
+      mapa.setView(origen, 17);
+    },
+  };
+}
+
+/** Camino a pie por calles (OSRM perfil peatón). Si falla, devuelve null. */
+export async function rutaAPie(desde, hasta) {
+  const u = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${desde.lng},${desde.lat};${hasta.lng},${hasta.lat}?overview=full&geometries=geojson`;
+  try {
+    const r = await fetch(u, { signal: AbortSignal.timeout(8000) });
+    const j = await r.json();
+    if (j.code !== 'Ok') return null;
+    const ruta = j.routes[0];
+    return {
+      metros: ruta.distance,
+      minutos: Math.max(1, Math.round(ruta.duration / 60)),
+      puntos: ruta.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+    };
+  } catch {
+    return null;
+  }
 }

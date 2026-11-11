@@ -13,22 +13,37 @@
     "descripcion": "Central de autobuses foráneos de Jalpan. Teléfono publicado: 441 296 0244. Algunas fuentes dan como dirección Av. Fray Junípero Serra s/n; la ubicación en el mapa es la registrada en OpenStreetMap (Calle Albertina Pedraza).",
     "consultado": "2026-11-10",
     "fuentes": [
-      { "nombre": "Reservamos · Central de Autobuses Jalpan de Serra", "url": "https://www.reservamos.mx/central-autobuses/t-jalpan-de-serra-jalpan-de-serra-central" },
-      { "nombre": "horariodeautobuses.com.mx · Jalpan de Serra", "url": "https://www.horariodeautobuses.com.mx/jalpan-de-serra" },
-      { "nombre": "horariodeautobuses.com.mx · Jalpan a Xilitla", "url": "https://www.horariodeautobuses.com.mx/jalpan-de-serra/jalpan-de-serra-a-xilitla" },
-      { "nombre": "terminal.horariodeautobuses.com.mx · Central de Jalpan", "url": "https://terminal.horariodeautobuses.com.mx/central-de-autobuses-jalpan-de-serra" },
-      { "nombre": "OpenStreetMap (ubicación)", "url": "https://www.openstreetmap.org/way/1080812038" }
+      {
+        "nombre": "Reservamos · Central de Autobuses Jalpan de Serra",
+        "url": "https://www.reservamos.mx/central-autobuses/t-jalpan-de-serra-jalpan-de-serra-central"
+      },
+      {
+        "nombre": "horariodeautobuses.com.mx · Jalpan de Serra",
+        "url": "https://www.horariodeautobuses.com.mx/jalpan-de-serra"
+      },
+      {
+        "nombre": "horariodeautobuses.com.mx · Jalpan a Xilitla",
+        "url": "https://www.horariodeautobuses.com.mx/jalpan-de-serra/jalpan-de-serra-a-xilitla"
+      },
+      {
+        "nombre": "terminal.horariodeautobuses.com.mx · Central de Jalpan",
+        "url": "https://terminal.horariodeautobuses.com.mx/central-de-autobuses-jalpan-de-serra"
+      },
+      {
+        "nombre": "OpenStreetMap (ubicación)",
+        "url": "https://www.openstreetmap.org/way/1080812038"
+      }
     ],
     "rutas": [
-      { "ruta": "XIL", "nombre": "Jalpan → Xilitla", "empresa": "Grupo Vencedor", "primera": "05:45", "ultima": "20:00", "frecuencia": "14 salidas al día", "duracion": "1 h 36 min", "tarifa": 140, "fuente": "Reservamos" },
-      { "ruta": "XIL", "nombre": "Jalpan → Xilitla", "empresa": "Flecha Amarilla", "primera": "04:30", "ultima": "19:15", "frecuencia": "10 salidas al día", "duracion": "1 h 45 min", "tarifa": 140, "fuente": "horariodeautobuses.com.mx" },
-      { "ruta": "RV", "nombre": "Jalpan → Río Verde", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "12 salidas al día", "duracion": "2 h 30 min", "tarifa": 260, "fuente": "Reservamos" },
-      { "ruta": "VLS", "nombre": "Jalpan → Ciudad Valles", "empresa": "Grupo Vencedor", "primera": "05:10", "ultima": "17:50", "frecuencia": "13 salidas al día", "duracion": "3 h 24 min", "tarifa": 486, "fuente": "Reservamos" },
-      { "ruta": "TAM", "nombre": "Jalpan → Tampico", "empresa": "Grupo Vencedor", "primera": "05:55", "ultima": "14:55", "frecuencia": "4 salidas al día", "duracion": "7 h", "tarifa": 1001, "fuente": "Reservamos" },
-      { "ruta": "SLP", "nombre": "Jalpan → San Luis Potosí", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "05:00 · 07:00 · 13:00 · 16:00", "duracion": null, "tarifa": null, "fuente": "horariodeautobuses.com.mx" },
-      { "ruta": "QRO", "nombre": "Jalpan → Querétaro", "empresa": "Flecha Amarilla / Primera Plus", "primera": "05:30", "ultima": "20:30", "frecuencia": "Cada 2 horas", "duracion": null, "tarifa": null, "fuente": "terminal.horariodeautobuses.com.mx" },
-      { "ruta": "CDMX", "nombre": "Jalpan → Ciudad de México", "empresa": "Autobuses Coordinados", "primera": "05:30", "ultima": "23:15", "frecuencia": "05:30 · 09:30 · 11:30 · 23:15", "duracion": null, "tarifa": null, "fuente": "horariodeautobuses.com.mx" },
-      { "ruta": "PIN", "nombre": "Jalpan → Pinal de Amoles", "empresa": "Autobuses de la Sierra Gorda", "primera": "06:45", "ultima": "22:00", "frecuencia": "Cada hora", "duracion": null, "tarifa": null, "fuente": "terminal.horariodeautobuses.com.mx" }
+      { "ruta": "XIL", "nombre": "Jalpan → Xilitla", "destino": "xilitla", "empresa": "Grupo Vencedor", "primera": "05:45", "ultima": "20:00", "frecuencia": "14 salidas al día", "duracion": "1 h 36 min", "tarifa": 140, "fuente": "Reservamos" },
+      { "ruta": "XIL", "nombre": "Jalpan → Xilitla", "destino": "xilitla", "empresa": "Flecha Amarilla", "primera": "04:30", "ultima": "19:15", "frecuencia": "10 salidas al día", "duracion": "1 h 45 min", "tarifa": 140, "fuente": "horariodeautobuses.com.mx" },
+      { "ruta": "RV", "nombre": "Jalpan → Río Verde", "destino": "rio-verde", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "12 salidas al día", "duracion": "2 h 30 min", "tarifa": 260, "fuente": "Reservamos" },
+      { "ruta": "VLS", "nombre": "Jalpan → Ciudad Valles", "destino": "ciudad-valles", "empresa": "Grupo Vencedor", "primera": "05:10", "ultima": "17:50", "frecuencia": "13 salidas al día", "duracion": "3 h 24 min", "tarifa": 486, "fuente": "Reservamos" },
+      { "ruta": "TAM", "nombre": "Jalpan → Tampico", "destino": "tampico", "empresa": "Grupo Vencedor", "primera": "05:55", "ultima": "14:55", "frecuencia": "4 salidas al día", "duracion": "7 h", "tarifa": 1001, "fuente": "Reservamos" },
+      { "ruta": "SLP", "nombre": "Jalpan → San Luis Potosí", "destino": "san-luis-potosi", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "05:00 · 07:00 · 13:00 · 16:00", "duracion": null, "tarifa": null, "fuente": "horariodeautobuses.com.mx" },
+      { "ruta": "QRO", "nombre": "Jalpan → Querétaro", "destino": "queretaro", "empresa": "Flecha Amarilla / Primera Plus", "primera": "05:30", "ultima": "20:30", "frecuencia": "Cada 2 horas", "duracion": null, "tarifa": null, "fuente": "terminal.horariodeautobuses.com.mx" },
+      { "ruta": "CDMX", "nombre": "Jalpan → Ciudad de México", "destino": "cdmx", "empresa": "Autobuses Coordinados", "primera": "05:30", "ultima": "23:15", "frecuencia": "05:30 · 09:30 · 11:30 · 23:15", "duracion": null, "tarifa": null, "fuente": "horariodeautobuses.com.mx" },
+      { "ruta": "PIN", "nombre": "Jalpan → Pinal de Amoles", "destino": "pinal-de-amoles", "empresa": "Autobuses de la Sierra Gorda", "primera": "06:45", "ultima": "22:00", "frecuencia": "Cada hora", "duracion": null, "tarifa": null, "fuente": "terminal.horariodeautobuses.com.mx" }
     ]
   },
   {
@@ -45,15 +60,21 @@
     "descripcion": "Punto de abordaje de Grupo Vencedor registrado en OpenStreetMap, a poco más de 1 km de la central. Las páginas de venta de boletos ubican las salidas de Vencedor en la central: confirma en taquilla desde dónde sale tu corrida.",
     "consultado": "2026-11-10",
     "fuentes": [
-      { "nombre": "OpenStreetMap (andén de Grupo Vencedor)", "url": "https://www.openstreetmap.org/way/1082763863" },
-      { "nombre": "Reservamos · Grupo Vencedor desde Jalpan", "url": "https://www.reservamos.mx/grupo-autobuses/Gpo-vencedor/jalpan-de-serra" }
+      {
+        "nombre": "OpenStreetMap (andén de Grupo Vencedor)",
+        "url": "https://www.openstreetmap.org/way/1082763863"
+      },
+      {
+        "nombre": "Reservamos · Grupo Vencedor desde Jalpan",
+        "url": "https://www.reservamos.mx/grupo-autobuses/Gpo-vencedor/jalpan-de-serra"
+      }
     ],
     "rutas": [
-      { "ruta": "XIL", "nombre": "Jalpan → Xilitla", "empresa": "Grupo Vencedor", "primera": "05:45", "ultima": "20:00", "frecuencia": "14 salidas al día", "duracion": "1 h 36 min", "tarifa": 140, "fuente": "Reservamos" },
-      { "ruta": "RV", "nombre": "Jalpan → Río Verde", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "12 salidas al día", "duracion": "2 h 30 min", "tarifa": 260, "fuente": "Reservamos" },
-      { "ruta": "VLS", "nombre": "Jalpan → Ciudad Valles", "empresa": "Grupo Vencedor", "primera": "05:10", "ultima": "17:50", "frecuencia": "13 salidas al día", "duracion": "3 h 24 min", "tarifa": 486, "fuente": "Reservamos" },
-      { "ruta": "TAM", "nombre": "Jalpan → Tampico", "empresa": "Grupo Vencedor", "primera": "05:55", "ultima": "14:55", "frecuencia": "4 salidas al día", "duracion": "7 h", "tarifa": 1001, "fuente": "Reservamos" },
-      { "ruta": "SLP", "nombre": "Jalpan → San Luis Potosí", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "05:00 · 07:00 · 13:00 · 16:00", "duracion": null, "tarifa": null, "fuente": "horariodeautobuses.com.mx" }
+      { "ruta": "XIL", "nombre": "Jalpan → Xilitla", "destino": "xilitla", "empresa": "Grupo Vencedor", "primera": "05:45", "ultima": "20:00", "frecuencia": "14 salidas al día", "duracion": "1 h 36 min", "tarifa": 140, "fuente": "Reservamos" },
+      { "ruta": "RV", "nombre": "Jalpan → Río Verde", "destino": "rio-verde", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "12 salidas al día", "duracion": "2 h 30 min", "tarifa": 260, "fuente": "Reservamos" },
+      { "ruta": "VLS", "nombre": "Jalpan → Ciudad Valles", "destino": "ciudad-valles", "empresa": "Grupo Vencedor", "primera": "05:10", "ultima": "17:50", "frecuencia": "13 salidas al día", "duracion": "3 h 24 min", "tarifa": 486, "fuente": "Reservamos" },
+      { "ruta": "TAM", "nombre": "Jalpan → Tampico", "destino": "tampico", "empresa": "Grupo Vencedor", "primera": "05:55", "ultima": "14:55", "frecuencia": "4 salidas al día", "duracion": "7 h", "tarifa": 1001, "fuente": "Reservamos" },
+      { "ruta": "SLP", "nombre": "Jalpan → San Luis Potosí", "destino": "san-luis-potosi", "empresa": "Grupo Vencedor", "primera": "05:00", "ultima": "16:00", "frecuencia": "05:00 · 07:00 · 13:00 · 16:00", "duracion": null, "tarifa": null, "fuente": "horariodeautobuses.com.mx" }
     ]
   }
 ]

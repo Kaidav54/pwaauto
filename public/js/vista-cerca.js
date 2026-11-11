@@ -50,7 +50,7 @@ async function buscar(c) {
             <div><strong>${formatoDistancia(masCercana.distancia)}</strong> al ${rumbo(pos, masCercana)}
               · unos ${minutosCaminando(masCercana.distancia)} min caminando</div>
             <div class="suave">${esc(masCercana.direccion)}</div>
-            <div class="parada__rutas">${masCercana.rutas.map((r) => etiquetaRuta(r.ruta)).join('')}</div>
+            <div class="parada__rutas">${[...new Set(masCercana.rutas.map((r) => r.ruta))].map(etiquetaRuta).join('')}</div>
           </div>
         </div>
         <div class="botones">

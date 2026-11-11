@@ -423,3 +423,12 @@ input:focus, textarea:focus, select:focus, .boton:focus-visible, .chip:focus-vis
 .resena__reportar:disabled { text-decoration: none; cursor: default; }
 .resena--nueva { animation: resaltar 2.4s ease-out; }
 @keyframes resaltar { from { background: color-mix(in srgb, var(--ocre) 35%, transparent); } }
+
+/* Empresa y duración bajo el destino; fuentes de la información */
+.recorrido__extra { display: block; font-weight: 400; font-size: .8rem; color: #b9ab98; margin-top: 2px; }
+.fuentes {
+  margin-top: 12px; padding: 12px 14px; font-size: .84rem; color: var(--texto-suave);
+  border: 1px dashed var(--borde); border-radius: var(--radio);
+}
+.fuentes ul { margin: 6px 0; padding-left: 18px; }
+.fuentes p { margin: 4px 0 0; }

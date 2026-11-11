@@ -18,8 +18,8 @@
     `<svg class="${clase}" aria-hidden="true" focusable="false"><use href="${SPRITE}#i-${nombre}"></use></svg>`;
 
   const icono = (tipo) => svg(tipo === 'combi' ? 'combi' : 'autobus');
-  const tipoTexto = (tipo) => (tipo === 'combi' ? 'Base de combis' : 'Parada de autobús');
-  const tarifa = (n) => `$${Number(n).toFixed(2)}`;
+  const tipoTexto = (tipo) => (tipo === 'combi' ? 'Base de combis' : 'Salida de autobuses');
+  const tarifa = (n) => (n == null ? 'Consultar' : `$${Number(n).toFixed(2)}`);
 
   // Cada ruta tiene siempre el mismo color, como los letreros pintados de las combis
   const COLORES_RUTA = ['#b8452a', '#2f5d50', '#3d6f9e', '#c47d1f', '#7a3e65', '#4f6b2a', '#8f3320', '#28597a'];
@@ -30,13 +30,25 @@
   }
   const etiquetaRuta = (ruta) => `<span class="etiqueta" style="--ruta:${colorRuta(ruta)}">${esc(ruta)}</span>`;
 
+  // true / false / null (null = aún no verificado en campo)
   function caracteristicas(p) {
     const lista = [
-      p.iluminada ? ['Iluminada', ''] : ['Poca iluminación de noche', ' etiqueta--alerta'],
-      p.techada ? ['Techada', ''] : null,
-      p.accesible ? ['Accesible', ''] : null,
+      p.iluminada === true ? ['Iluminada', ''] : p.iluminada === false ? ['Poca iluminación de noche', ' etiqueta--alerta'] : null,
+      p.techada === true ? ['Techada', ''] : null,
+      p.accesible === true ? ['Accesible', ''] : null,
     ].filter(Boolean);
+    if (!lista.length) return '<span class="etiqueta etiqueta--dato">Instalaciones por confirmar</span>';
     return lista.map(([t, extra]) => `<span class="etiqueta etiqueta--dato${extra}">${esc(t)}</span>`).join('');
+  }
+
+  function fuentesHTML(p) {
+    if (!p.fuentes || !p.fuentes.length) return '';
+    const consultado = p.consultado ? new Date(p.consultado + 'T12:00:00').toLocaleDateString('es-MX', { dateStyle: 'long' }) : '';
+    return `<section class="fuentes">
+    <strong>Fuentes de la información</strong>${consultado ? ` · consultadas el ${esc(consultado)}` : ''}
+    <ul>${p.fuentes.map((f) => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.nombre)}</a></li>`).join('')}</ul>
+    <p>Los horarios y precios pueden cambiar sin aviso: confirma en taquilla antes de viajar.</p>
+  </section>`;
   }
 
   function fecha(iso) {
@@ -69,10 +81,10 @@
       .map(
         (r) => `<tr>
           <td class="c-ruta">${etiquetaRuta(r.ruta)}</td>
-          <td class="recorrido">${esc(r.nombre)}</td>
+          <td class="recorrido">${esc(r.nombre)}${r.empresa || r.duracion ? `<span class="recorrido__extra">${esc([r.empresa, r.duracion].filter(Boolean).join(' · '))}</span>` : ''}</td>
           <td class="hora" data-label="Primera">${esc(r.primera)}</td>
           <td class="hora" data-label="Última">${esc(r.ultima)}</td>
-          <td class="frecuencia" data-label="Cada">${esc(r.frecuencia)}</td>
+          <td class="frecuencia" data-label="Salidas">${esc(r.frecuencia)}</td>
           <td class="tarifa">${tarifa(r.tarifa)}</td>
         </tr>`
       )
@@ -99,14 +111,15 @@
   </section>
 
   <section class="tablero" aria-labelledby="titulo-horarios">
-    <div class="tablero__titulo"><span id="titulo-horarios">Salidas desde aquí</span><span>${p.rutas.length} ${p.rutas.length === 1 ? 'ruta' : 'rutas'}</span></div>
+    <div class="tablero__titulo"><span id="titulo-horarios">Salidas desde aquí</span><span>${p.rutas.length} ${p.rutas.length === 1 ? 'corrida' : 'corridas'}</span></div>
     <div class="tabla-envoltura">
       <table class="tabla">
-        <thead><tr><th>Ruta</th><th>Recorrido</th><th>Primera</th><th>Última</th><th>Cada</th><th>Tarifa</th></tr></thead>
+        <thead><tr><th>Ruta</th><th>Destino</th><th>Primera</th><th>Última</th><th>Salidas</th><th>Tarifa</th></tr></thead>
         <tbody>${filas}</tbody>
       </table>
     </div>
   </section>
+  ${fuentesHTML(p)}
 
   <section class="tarjeta" id="resenas" style="margin-top:16px">
     <h2>Lo que dicen los usuarios</h2>
@@ -115,7 +128,7 @@
     <form data-form-resena>
       <label for="texto-resena">Tu comentario</label>
       <textarea id="texto-resena" name="texto" required minlength="3" maxlength="500"
-        placeholder="Ej. «La 12 viene tardando 20 min» o «Parada segura e iluminada»"></textarea>
+        placeholder="Ej. «La corrida a Xilitla salió 20 min tarde» o «Hay sala de espera techada»"></textarea>
       <label for="autor-resena">Nombre (opcional)</label>
       <input id="autor-resena" name="autor" maxlength="40" placeholder="Anónimo">
       <div class="botones"><button class="boton" type="submit">Publicar comentario</button></div>

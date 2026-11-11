@@ -7,9 +7,10 @@ import {
 } from './notificaciones.js';
 
 const PLANTILLAS = [
-  { tipo: 'obras', titulo: 'Obras viales en Av. Central', cuerpo: 'Obras viales en Av. Central: toma precauciones. Las rutas 1 y 12 se desvían por Calle Hidalgo.' },
-  { tipo: 'retraso', titulo: 'Retraso en la ruta 12', cuerpo: 'La ruta 12 presenta retrasos de 20 min por tráfico en Col. Norte.' },
-  { tipo: 'desvio', titulo: 'Desvío de combis C3', cuerpo: 'Por evento en Plaza Sur, la C3 hace base temporal en Av. Sur 700.' },
+  // Plantillas de ejemplo para el panel de demostración (el operador escribe el aviso real)
+  { tipo: 'retraso', titulo: 'Retraso en corridas a Xilitla', cuerpo: 'Las salidas a Xilitla llevan unos 20 min de retraso. Confirma en taquilla.' },
+  { tipo: 'obras', titulo: 'Trabajos en la carretera', cuerpo: 'Hay trabajos en el camino: los tiempos de viaje pueden ser mayores. Toma precauciones.' },
+  { tipo: 'desvio', titulo: 'Cambio de andén', cuerpo: 'Hoy las corridas a Río Verde salen de la Central de Autobuses. Revisa el andén en taquilla.' },
 ];
 
 const fecha = (iso) => new Date(iso).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' });

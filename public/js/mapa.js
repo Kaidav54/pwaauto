@@ -42,7 +42,7 @@ function iconoParada(L, p, { destacada = false } = {}) {
 }
 
 function popupParada(p, href) {
-  const rutas = p.rutas.map((r) => etiquetaRuta(r.ruta)).join(' ');
+  const rutas = [...new Set(p.rutas.map((r) => r.ruta))].map(etiquetaRuta).join(' ');
   return `<div class="popup">
     <strong>${esc(p.nombre)}</strong><br>
     <span class="suave pequeno">${esc(p.direccion)}</span>

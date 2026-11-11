@@ -23,22 +23,23 @@ test('CP-01 · /api/salud responde ok', async () => {
   assert.equal((await r.json()).ok, true);
 });
 
-test('CP-02 · el catálogo tiene paradas con rutas, horarios y tarifa', async () => {
+test('CP-02 · el catálogo tiene paradas con rutas y horarios (tarifa numérica o «por consultar»)', async () => {
   const paradas = await (await fetch(`${base}/api/paradas`)).json();
-  assert.ok(paradas.length >= 5);
+  assert.ok(paradas.length >= 2);
   for (const p of paradas) {
     assert.ok(p.id && p.nombre && typeof p.lat === 'number' && typeof p.lng === 'number');
-    for (const r of p.rutas) assert.ok(r.ruta && r.primera && r.ultima && r.tarifa > 0);
+    for (const r of p.rutas) assert.ok(r.ruta && r.primera && r.ultima && (r.tarifa === null || r.tarifa > 0));
   }
 });
 
 test('CP-03 · la ficha SSR llega como HTML completo con datos para hidratar', async () => {
-  const r = await fetch(`${base}/parada/terminal-centro`);
+  const r = await fetch(`${base}/parada/central-jalpan`);
   assert.equal(r.status, 200);
   const html = await r.text();
-  assert.match(html, /<h1>Terminal Centro<\/h1>/);
-  assert.match(html, /Centro – Universidad/);
-  assert.match(html, /\$12\.00/);
+  assert.match(html, /<h1>Central de Autobuses Jalpan de Serra<\/h1>/);
+  assert.match(html, /Jalpan → Xilitla/);
+  assert.match(html, /\$140\.00/);
+  assert.match(html, /Fuentes de la información/);
   assert.match(html, /id="datos-ssr"/);
   assert.match(html, /ficha-ssr\.js/);
 });
@@ -49,26 +50,26 @@ test('CP-04 · parada inexistente devuelve 404', async () => {
 });
 
 test('CP-05 · publicar reseña y verla en API y SSR', async () => {
-  const resena = { id: 'test-1', paradaId: 'plaza-sur', autor: 'QA', texto: 'La ruta 5 va llena', fecha: new Date().toISOString() };
+  const resena = { id: 'test-1', paradaId: 'central-jalpan', autor: 'QA', texto: 'La corrida a Xilitla salió 20 min tarde', fecha: new Date().toISOString() };
   assert.equal((await post('/api/resenas', resena)).status, 201);
-  const lista = await (await fetch(`${base}/api/paradas/plaza-sur/resenas`)).json();
+  const lista = await (await fetch(`${base}/api/paradas/central-jalpan/resenas`)).json();
   assert.ok(lista.some((r) => r.id === 'test-1'));
-  assert.match(await (await fetch(`${base}/parada/plaza-sur`)).text(), /La ruta 5 va llena/);
+  assert.match(await (await fetch(`${base}/parada/central-jalpan`)).text(), /La corrida a Xilitla salió 20 min tarde/);
 });
 
 test('CP-06 · reenviar la misma reseña (reintento de Background Sync) no la duplica', async () => {
-  const resena = { id: 'test-2', paradaId: 'universidad', texto: 'Parada segura e iluminada', fecha: new Date().toISOString() };
+  const resena = { id: 'test-2', paradaId: 'anden-vencedor', texto: 'Hay sala de espera techada', fecha: new Date().toISOString() };
   assert.equal((await post('/api/resenas', resena)).status, 201);
   assert.equal((await post('/api/resenas', resena)).status, 200);
-  const lista = await (await fetch(`${base}/api/paradas/universidad/resenas`)).json();
+  const lista = await (await fetch(`${base}/api/paradas/anden-vencedor/resenas`)).json();
   assert.equal(lista.filter((r) => r.id === 'test-2').length, 1);
 });
 
 test('CP-07 · reseñas inválidas se rechazan y el HTML se escapa', async () => {
-  assert.equal((await post('/api/resenas', { id: 'x', paradaId: 'plaza-sur', texto: 'no' })).status, 400);
+  assert.equal((await post('/api/resenas', { id: 'x', paradaId: 'central-jalpan', texto: 'no' })).status, 400);
   assert.equal((await post('/api/resenas', { id: 'y', paradaId: 'falsa', texto: 'texto válido' })).status, 400);
-  await post('/api/resenas', { id: 'xss', paradaId: 'estacion-tren', texto: '<script>alert(1)</script>' });
-  const html = await (await fetch(`${base}/parada/estacion-tren`)).text();
+  await post('/api/resenas', { id: 'xss', paradaId: 'anden-vencedor', texto: '<script>alert(1)</script>' });
+  const html = await (await fetch(`${base}/parada/anden-vencedor`)).text();
   assert.ok(!html.includes('<script>alert(1)</script>'));
   assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/);
 });

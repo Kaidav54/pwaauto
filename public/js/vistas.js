@@ -109,14 +109,14 @@ export async function vistaParadas(c) {
     <span class="kicker">${paradas.length} puntos de salida</span>
     <h1>Paradas y bases</h1>
     <div class="buscador">
-      <label for="q" class="suave pequeno">Busca por nombre, zona o número de ruta</label>
-      <input id="q" type="search" placeholder="Ej. Centro, 12, combi…" autocomplete="off">
+      <label for="q" class="suave pequeno">Busca por destino, empresa o nombre</label>
+      <input id="q" type="search" placeholder="Ej. Xilitla, Vencedor, Querétaro…" autocomplete="off">
     </div>
-    <div class="filtros" role="group" aria-label="Filtrar por tipo">
+    ${new Set(paradas.map((p) => p.tipo)).size > 1 ? `<div class="filtros" role="group" aria-label="Filtrar por tipo">
       <button class="chip" data-tipo="todos" aria-pressed="true">Todas</button>
       <button class="chip" data-tipo="autobus" aria-pressed="false">${svg('autobus')}Autobús</button>
       <button class="chip" data-tipo="combi" aria-pressed="false">${svg('combi')}Combis</button>
-    </div>
+    </div>` : ''}
     <div id="mapa-paradas" role="region" aria-label="Mapa de paradas"></div>
     <ul class="lista" id="lista"></ul>`;
 
@@ -133,7 +133,7 @@ export async function vistaParadas(c) {
   const dibujar = () => {
     const q = $('#q', c).value.trim().toLowerCase();
     const filtradas = paradas.filter((p) => {
-      const texto = `${p.nombre} ${p.zona} ${p.direccion} ${p.rutas.map((r) => r.ruta + ' ' + r.nombre).join(' ')}`.toLowerCase();
+      const texto = `${p.nombre} ${p.zona} ${p.direccion} ${p.rutas.map((r) => `${r.ruta} ${r.nombre} ${r.empresa || ''}`).join(' ')}`.toLowerCase();
       return (tipo === 'todos' || p.tipo === tipo) && (!q || texto.includes(q));
     });
     $('#lista', c).innerHTML = filtradas.length
@@ -159,7 +159,7 @@ export function itemParada(p, href, extra = '') {
     <span>
       <span class="parada__nombre">${esc(p.nombre)}</span>
       <span class="parada__meta">${tipoTexto(p.tipo)} · ${esc(p.zona)}</span>
-      <span class="parada__rutas">${p.rutas.map((r) => etiquetaRuta(r.ruta)).join('')}</span>
+      <span class="parada__rutas">${[...new Set(p.rutas.map((r) => r.ruta))].map(etiquetaRuta).join('')}</span>
     </span>
     <span class="parada__extra">${extra ? esc(extra) : svg('flecha')}</span>
   </a></li>`;
